@@ -6,6 +6,7 @@ let quizAnswers = [];
 let quizScore = 0;
 let taskName = '';
 let userPhoto = null;
+let userQuizResponses = []; // Store user answers for report
 
 // DOM elements
 const uploadScreen = document.getElementById('upload-screen');
@@ -94,6 +95,7 @@ document.addEventListener('keydown', (event) => {
 function generateQuiz() {
     quizAnswers = [];
     quizScore = 0;
+    userQuizResponses = []; // Reset user responses
     quizContent.innerHTML = '';
     const questionCount = 5;
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
@@ -122,7 +124,7 @@ function generateQuiz() {
             questionDiv.appendChild(input);
             questionDiv.appendChild(label);
             questionDiv.appendChild(document.createElement('br'));
-            if (option === step.Step) quizAnswers.push({ question: index, correct: optIndex });
+            if (option === step.Step) quizAnswers.push({ question: index, correct: optIndex, correctAnswer: step.Step });
         });
         
         quizContent.appendChild(questionDiv);
@@ -134,11 +136,18 @@ function generateQuiz() {
 // Quiz submission
 submitQuiz.addEventListener('click', () => {
     quizScore = 0;
+    userQuizResponses = [];
     quizAnswers.forEach((answer, index) => {
         const selected = document.querySelector(`input[name="question-${index}"]:checked`);
-        if (selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value) {
-            quizScore++;
-        }
+        const userAnswer = selected ? selected.value : 'No answer';
+        const isCorrect = selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value;
+        if (isCorrect) quizScore++;
+        userQuizResponses.push({
+            question: `Question ${index + 1}: What is Step ${steps.find(s => s.Step === answer.correctAnswer)['Order Number']}?`,
+            userAnswer,
+            correctAnswer: answer.correctAnswer,
+            isCorrect
+        });
     });
     quizScreen.classList.add('hidden');
     reportScreen.classList.remove('hidden');
@@ -167,25 +176,62 @@ generateReport.addEventListener('click', () => {
     const userName = userNameInput.value || 'Anonymous';
     const endTime = new Date();
     const timeTaken = Math.floor((endTime - startTime) / 1000);
+    const averageTime = 300; // Assumed average time in seconds (5 minutes)
     const hours = Math.floor(timeTaken / 3600);
     const minutes = Math.floor((timeTaken % 3600) / 60);
     const seconds = timeTaken % 60;
     
-    doc.setFontSize(16);
-    doc.text(`SlideCraft Report: ${taskName}`, 10, 10);
-    doc.setFontSize(12);
-    doc.text(`Name: ${userName}`, 10, 20);
-    doc.text(`Task: ${taskName}`, 10, 30);
-    doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 40);
-    doc.text(`Quiz Score: ${quizScore}/5`, 10, 50);
+    // Header
+    doc.setFillColor(30, 64, 175); // Blue background
+    doc.rect(0, 0, 210, 20, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255); // White text
+    doc.text(`SlideCraft Report: ${taskName}`, 10, 15);
     
-    doc.text('Process Steps:', 10, 60);
-    steps.forEach((step, index) => {
-        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''}`, 10, 70 + index * 10);
+    // User Info Section
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0); // Black text
+    doc.text(`Name: ${userName}`, 10, 30);
+    doc.text(`Task: ${taskName}`, 10, 40);
+    doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
+    doc.text(`Average Time: 00:05:00`, 10, 60);
+    doc.setTextColor(34, 139, 34); // Green if faster
+    if (timeTaken > averageTime) doc.setTextColor(220, 20, 60); // Red if slower
+    doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
+    
+    // Quiz Results Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Quiz Score: ${quizScore}/5`, 10, 90);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    let yPos = 100;
+    userQuizResponses.forEach((response, index) => {
+        doc.text(response.question, 10, yPos);
+        doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
+        doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
+        doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60); // Green for correct, red for incorrect
+        doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
+        doc.setTextColor(0, 0, 0);
+        yPos += 25;
     });
     
+    // Process Steps Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Process Steps:', 10, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    steps.forEach((step, index) => {
+        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''}`, 10, yPos + 10 + index * 10);
+    });
+    
+    // Add User Photo
     if (userPhoto) {
-        doc.addImage(userPhoto, 'JPEG', 10, 70 + steps.length * 10, 50, 50);
+        doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
     }
     
     doc.save(`Process_Report_${taskName}.pdf`);
