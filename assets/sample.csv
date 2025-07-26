@@ -1,1 +1,6 @@
-
+```csv
+Step,Description,Order Number,Image URL
+Mix Ingredients,"Combine flour, sugar, and eggs in a bowl",1,https://example.com/mix.jpg
+Bake,"Place in oven at 350°F for 30 minutes",2,https://example.com/bake.jpg
+Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg
+```
