@@ -1,235 +1,192 @@
-```javascript
+// Initialize state
 let steps = [];
 let currentStep = 0;
-let startTime, endTime;
-let quizQuestions = [];
-let currentQuestion = 0;
+let startTime = null;
+let quizAnswers = [];
 let quizScore = 0;
-let userAnswers = [];
-let uploadedPhoto = null;
+let taskName = '';
+let userPhoto = null;
 
-document.getElementById('theme').addEventListener('change', (e) => {
-    document.body.className = e.target.value;
+// DOM elements
+const uploadScreen = document.getElementById('upload-screen');
+const presentationScreen = document.getElementById('presentation-screen');
+const quizScreen = document.getElementById('quiz-screen');
+const reportScreen = document.getElementById('report-screen');
+const csvUpload = document.getElementById('csv-upload');
+const themeSelect = document.getElementById('theme-select');
+const errorMessage = document.getElementById('error-message');
+const stepTitle = document.getElementById('step-title');
+const stepDescription = document.getElementById('step-description');
+const stepImage = document.getElementById('step-image');
+const prevButton = document.getElementById('prev-button');
+const nextButton = document.getElementById('next-button');
+const quizContent = document.getElementById('quiz-content');
+const submitQuiz = document.getElementById('submit-quiz');
+const userNameInput = document.getElementById('user-name');
+const photoUpload = document.getElementById('photo-upload');
+const photoPreview = document.getElementById('photo-preview');
+const generateReport = document.getElementById('generate-report');
+
+// Theme switching
+themeSelect.addEventListener('change', () => {
+    document.body.className = themeSelect.value + ' min-h-screen flex flex-col items-center justify-center';
 });
 
-document.getElementById('csv-file').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        Papa.parse(file, {
-            header: true,
-            complete: (result) => {
-                if (validateCSV(result.data)) {
-                    steps = result.data.filter(row => row['Step'] && row['Description'] && row['Order Number'] && row['Image URL'])
-                        .sort((a, b) => parseInt(a['Order Number']) - parseInt(b['Order Number']));
-                    if (steps.length === 0) {
-                        showError('No valid steps found in CSV.');
-                        return;
-                    }
-                    document.getElementById('start-btn').disabled = false;
-                    document.getElementById('error').classList.add('hidden');
-                } else {
-                    showError('Invalid CSV format. Required columns: Step, Description, Order Number, Image URL');
-                }
-            },
-            error: () => showError('Error parsing CSV file.')
-        });
-    }
-});
-
-document.getElementById('start-btn').addEventListener('click', () => {
-    if (steps.length > 0) {
-        startTime = new Date();
-        showPresentation();
-        displayStep(0);
-    }
-});
-
-document.getElementById('prev-btn').addEventListener('click', () => {
-    if (currentStep > 0) displayStep(currentStep - 1);
-});
-
-document.getElementById('next-btn').addEventListener('click', () => {
-    if (currentStep < steps.length - 1) {
-        displayStep(currentStep + 1);
-    } else {
-        endTime = new Date();
-        generateQuiz();
-        showQuiz();
-    }
-});
-
-document.getElementById('next-question').addEventListener('click', () => {
-    if (currentQuestion < quizQuestions.length - 1) {
-        currentQuestion++;
-        displayQuestion();
-    } else {
-        showReport();
-    }
-});
-
-document.getElementById('photo-upload').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file && file.size <= 5 * 1024 * 1024 && ['image/jpeg', 'image/png'].includes(file.type)) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            uploadedPhoto = e.target.result;
-            document.getElementById('photo-preview').src = uploadedPhoto;
-            document.getElementById('photo-preview').classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-    } else {
-        showError('Please upload a JPEG or PNG image (max 5MB).');
-    }
-});
-
-document.getElementById('generate-report').addEventListener('click', generatePDF);
-
-document.addEventListener('keydown', (e) => {
-    if (document.getElementById('presentation').classList.contains('hidden')) return;
-    if (e.key === 'ArrowLeft' && currentStep > 0) displayStep(currentStep - 1);
-    if (e.key === 'ArrowRight' && currentStep < steps.length - 1) displayStep(currentStep + 1);
-    if (e.key === 'ArrowRight' && currentStep === steps.length - 1) {
-        endTime = new Date();
-        generateQuiz();
-        showQuiz();
-    }
-});
-
-function validateCSV(data) {
-    const required = ['Step', 'Description', 'Order Number', 'Image URL'];
-    return data.length > 0 && required.every(col => Object.keys(data[0]).includes(col));
-}
-
-function showError(message) {
-    const error = document.getElementById('error');
-    error.textContent = message;
-    error.classList.remove('hidden');
-}
-
-function showPresentation() {
-    document.getElementById('upload-section').classList.add('hidden');
-    document.getElementById('presentation').classList.remove('hidden');
-}
-
-function displayStep(index) {
-    currentStep = index;
-    const step = steps[index];
-    document.getElementById('step-title').textContent = step.Step || 'Untitled Step';
-    document.getElementById('step-description').textContent = step.Description || 'No description';
-    const img = document.getElementById('step-image');
-    img.src = step['Image URL'] || 'assets/placeholder.jpg';
-    img.onerror = () => { img.src = 'assets/placeholder.jpg'; };
-}
-
-function generateQuiz() {
-    quizQuestions = [];
-    const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, Math.min(5, steps.length));
-    shuffledSteps.forEach((step, index) => {
-        const questionText = 'What is step number ' + step['Order Number'] + '?';
-        const question = {
-            text: questionText,
-            correct: step.Step,
-            options: [step.Step]
-        };
-        while (question.options.length < 4) {
-            const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
-            if (!question.options.includes(randomStep) && randomStep) {
-                question.options.push(randomStep);
+// CSV upload
+csvUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
+    Papa.parse(file, {
+        header: true,
+        complete: (result) => {
+            const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
+            if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+                errorMessage.classList.remove('hidden');
+                return;
             }
+            errorMessage.classList.add('hidden');
+            steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+            if (steps.length === 0) {
+                errorMessage.textContent = 'No valid steps found in CSV.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+            startTime = new Date();
+            showStep(0);
+            uploadScreen.classList.add('hidden');
+            presentationScreen.classList.remove('hidden');
         }
-        question.options.sort(() => Math.random() - 0.5);
-        quizQuestions.push(question);
     });
+});
+
+// Presentation navigation
+function showStep(index) {
+    if (index < 0 || index >= steps.length) return;
+    currentStep = index;
+    stepTitle.textContent = steps[index].Step;
+    stepDescription.textContent = steps[index].Description;
+    stepImage.src = steps[index]['Image URL'] || 'assets/placeholder.jpg';
+    stepImage.onerror = () => { stepImage.src = 'assets/placeholder.jpg'; };
+    prevButton.classList.toggle('hidden', index === 0);
+    nextButton.textContent = index === steps.length - 1 ? 'Start Quiz' : 'Next';
 }
 
-function showQuiz() {
-    document.getElementById('presentation').classList.add('hidden');
-    document.getElementById('quiz').classList.remove('hidden');
-    currentQuestion = 0;
-    quizScore = 0;
-    userAnswers = [];
-    displayQuestion();
-}
-
-function displayQuestion() {
-    const question = quizQuestions[currentQuestion];
-    document.getElementById('question').textContent = question.text;
-    const optionsDiv = document.getElementById('options');
-    optionsDiv.innerHTML = '';
-    question.options.forEach((option, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'bg-gray-200 text-black px-4 py-2 rounded w-full';
-        btn.textContent = option;
-        btn.onclick = () => checkAnswer(option, question.correct);
-        optionsDiv.appendChild(btn);
-    });
-    document.getElementById('quiz-feedback').textContent = '';
-    document.getElementById('next-question').classList.add('hidden');
-}
-
-function checkAnswer(selected, correct) {
-    const feedback = document.getElementById('quiz-feedback');
-    if (selected === correct) {
-        quizScore++;
-        feedback.textContent = 'Correct!';
-        feedback.className = 'text-green-500 mt-4';
+prevButton.addEventListener('click', () => showStep(currentStep - 1));
+nextButton.addEventListener('click', () => {
+    if (currentStep === steps.length - 1) {
+        presentationScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        generateQuiz();
     } else {
-        feedback.textContent = 'Incorrect. The correct answer is: ' + correct;
-        feedback.className = 'text-red-500 mt-4';
+        showStep(currentStep + 1);
     }
-    userAnswers.push({ question: quizQuestions[currentQuestion].text, selected, correct });
-    document.getElementById('next-question').classList.remove('hidden');
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+    if (presentationScreen.classList.contains('hidden')) return;
+    if (event.key === 'ArrowLeft') showStep(currentStep - 1);
+    if (event.key === 'ArrowRight') showStep(currentStep + 1);
+});
+
+// Quiz generation
+function generateQuiz() {
+    quizAnswers = [];
+    quizScore = 0;
+    quizContent.innerHTML = '';
+    const questionCount = 5;
+    const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
+    
+    shuffledSteps.forEach((step, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'mb-4';
+        questionDiv.innerHTML = `<p class="font-bold">Question ${index + 1}: What is Step ${step['Order Number']}?</p>`;
+        
+        const options = [step.Step];
+        while (options.length < 4) {
+            const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
+            if (!options.includes(randomStep)) options.push(randomStep);
+        }
+        options.sort(() => Math.random() - 0.5);
+        
+        options.forEach((option, optIndex) => {
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `question-${index}`;
+            input.value = option;
+            input.className = 'mr-2';
+            const label = document.createElement('label');
+            label.textContent = option;
+            label.className = 'mr-4';
+            questionDiv.appendChild(input);
+            questionDiv.appendChild(label);
+            questionDiv.appendChild(document.createElement('br'));
+            if (option === step.Step) quizAnswers.push({ question: index, correct: optIndex });
+        });
+        
+        quizContent.appendChild(questionDiv);
+    });
+    
+    submitQuiz.classList.remove('hidden');
 }
 
-function showReport() {
-    document.getElementById('quiz').classList.add('hidden');
-    document.getElementById('report').classList.remove('hidden');
-}
+// Quiz submission
+submitQuiz.addEventListener('click', () => {
+    quizScore = 0;
+    quizAnswers.forEach((answer, index) => {
+        const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+        if (selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value) {
+            quizScore++;
+        }
+    });
+    quizScreen.classList.add('hidden');
+    reportScreen.classList.remove('hidden');
+});
 
-function generatePDF() {
+// Photo upload
+photoUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file || file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Please upload a JPEG or PNG image under 5MB.');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+        userPhoto = reader.result;
+        photoPreview.src = userPhoto;
+        photoPreview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+});
+
+// Report generation
+generateReport.addEventListener('click', () => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const userName = document.getElementById('user-name').value || 'Anonymous';
-    const taskName = document.getElementById('csv-file').files[0]?.name.replace('.csv', '') || 'Task';
-    const timeTaken = formatTime(endTime - startTime);
-
+    const userName = userNameInput.value || 'Anonymous';
+    const endTime = new Date();
+    const timeTaken = Math.floor((endTime - startTime) / 1000);
+    const hours = Math.floor(timeTaken / 3600);
+    const minutes = Math.floor((timeTaken % 3600) / 60);
+    const seconds = timeTaken % 60;
+    
     doc.setFontSize(16);
-    doc.text('SlideCraft Report', 10, 10);
+    doc.text(`SlideCraft Report: ${taskName}`, 10, 10);
     doc.setFontSize(12);
-    doc.text('Name: ' + userName, 10, 20);
-    doc.text('Task: ' + taskName, 10, 30);
-    doc.text('Time Taken: You finished the ' + taskName + ' task in ' + timeTaken, 10, 40);
-    doc.text('Quiz Score: ' + quizScore + '/5', 10, 50);
-
-    doc.text('Quiz Answers:', 10, 60);
-    userAnswers.forEach((answer, i) => {
-        doc.text((i + 1) + '. ' + answer.question, 10, 70 + i * 20);
-        doc.text('Your Answer: ' + answer.selected, 20, 75 + i * 20);
-        doc.text('Correct Answer: ' + answer.correct, 20, 80 + i * 20);
+    doc.text(`Name: ${userName}`, 10, 20);
+    doc.text(`Task: ${taskName}`, 10, 30);
+    doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 40);
+    doc.text(`Quiz Score: ${quizScore}/5`, 10, 50);
+    
+    doc.text('Process Steps:', 10, 60);
+    steps.forEach((step, index) => {
+        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''}`, 10, 70 + index * 10);
     });
-
-    let yPos = 70 + userAnswers.length * 20 + 10;
-    if (uploadedPhoto) {
-        doc.text('Uploaded Photo:', 10, yPos);
-        doc.addImage(uploadedPhoto, 'JPEG', 10, yPos + 10, 80, 60);
-        yPos += 80;
+    
+    if (userPhoto) {
+        doc.addImage(userPhoto, 'JPEG', 10, 70 + steps.length * 10, 50, 50);
     }
-
-    doc.text('Process Summary:', 10, yPos);
-    steps.forEach((step, i) => {
-        const text = step['Order Number'] + '. ' + step.Step + ': ' + step.Description;
-        const lines = doc.splitTextToSize(text, 180);
-        doc.text(lines, 10, yPos + 10 + i * 15);
-    });
-
-    doc.save('Process_Report_' + taskName + '.pdf');
-}
-
-function formatTime(ms) {
-    const seconds = Math.floor(ms / 1000);
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
-}
-```
+    
+    doc.save(`Process_Report_${taskName}.pdf`);
+});
