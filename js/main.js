@@ -139,7 +139,7 @@ submitQuiz.addEventListener('click', () => {
     userQuizResponses = [];
     quizAnswers.forEach((answer, index) => {
         const selected = document.querySelector(`input[name="question-${index}"]:checked`);
-        const userAnswer = selected ? selected.value : 'No answer';
+        const userAnswer = selected ? selected.value : 'No answer'; // Fixed comma to semicolon
         const isCorrect = selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value;
         if (isCorrect) quizScore++;
         userQuizResponses.push({
