@@ -19,13 +19,19 @@ document.getElementById('csv-file').addEventListener('change', (e) => {
             header: true,
             complete: (result) => {
                 if (validateCSV(result.data)) {
-                    steps = result.data.sort((a, b) => a['Order Number'] - b['Order Number']);
+                    steps = result.data.filter(row => row['Step'] && row['Description'] && row['Order Number'] && row['Image URL'])
+                        .sort((a, b) => parseInt(a['Order Number']) - parseInt(b['Order Number']));
+                    if (steps.length === 0) {
+                        showError('No valid steps found in CSV.');
+                        return;
+                    }
                     document.getElementById('start-btn').disabled = false;
                     document.getElementById('error').classList.add('hidden');
                 } else {
                     showError('Invalid CSV format. Required columns: Step, Description, Order Number, Image URL');
                 }
-            }
+            },
+            error: () => showError('Error parsing CSV file.')
         });
     }
 });
@@ -108,8 +114,8 @@ function showPresentation() {
 function displayStep(index) {
     currentStep = index;
     const step = steps[index];
-    document.getElementById('step-title').textContent = step.Step;
-    document.getElementById('step-description').textContent = step.Description;
+    document.getElementById('step-title').textContent = step.Step || 'Untitled Step';
+    document.getElementById('step-description').textContent = step.Description || 'No description';
     const img = document.getElementById('step-image');
     img.src = step['Image URL'] || 'assets/placeholder.jpg';
     img.onerror = () => { img.src = 'assets/placeholder.jpg'; };
@@ -117,20 +123,23 @@ function displayStep(index) {
 
 function generateQuiz() {
     quizQuestions = [];
-    for (let i = 0; i < 5 && i < steps.length; i++) {
-        const step = steps[i];
+    const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, Math.min(5, steps.length));
+    shuffledSteps.forEach((step, index) => {
+        const questionText = 'What is step number ' + step['Order Number'] + '?';
         const question = {
-            text: `What is Step ${step['Order Number']}?`,
+            text: questionText,
             correct: step.Step,
             options: [step.Step]
         };
         while (question.options.length < 4) {
             const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
-            if (!question.options.includes(randomStep)) question.options.push(randomStep);
+            if (!question.options.includes(randomStep) && randomStep) {
+                question.options.push(randomStep);
+            }
         }
         question.options.sort(() => Math.random() - 0.5);
         quizQuestions.push(question);
-    }
+    });
 }
 
 function showQuiz() {
@@ -165,7 +174,7 @@ function checkAnswer(selected, correct) {
         feedback.textContent = 'Correct!';
         feedback.className = 'text-green-500 mt-4';
     } else {
-        feedback.textContent = `Incorrect. The correct answer is: ${correct}`;
+        feedback.textContent = 'Incorrect. The correct answer is: ' + correct;
         feedback.className = 'text-red-500 mt-4';
     }
     userAnswers.push({ question: quizQuestions[currentQuestion].text, selected, correct });
@@ -187,16 +196,16 @@ function generatePDF() {
     doc.setFontSize(16);
     doc.text('SlideCraft Report', 10, 10);
     doc.setFontSize(12);
-    doc.text(`Name: ${userName}`, 10, 20);
-    doc.text(`Task: ${taskName}`, 10, 30);
-    doc.text(`Time Taken: You finished the ${taskName} task in ${timeTaken}`, 10, 40);
-    doc.text(`Quiz Score: ${quizScore}/5`, 10, 50);
+    doc.text('Name: ' + userName, 10, 20);
+    doc.text('Task: ' + taskName, 10, 30);
+    doc.text('Time Taken: You finished the ' + taskName + ' task in ' + timeTaken, 10, 40);
+    doc.text('Quiz Score: ' + quizScore + '/5', 10, 50);
 
     doc.text('Quiz Answers:', 10, 60);
     userAnswers.forEach((answer, i) => {
-        doc.text(`${i + 1}. ${answer.question}`, 10, 70 + i * 20);
-        doc.text(`Your Answer: ${answer.selected}`, 20, 75 + i * 20);
-        doc.text(`Correct Answer: ${answer.correct}`, 20, 80 + i * 20);
+        doc.text((i + 1) + '. ' + answer.question, 10, 70 + i * 20);
+        doc.text('Your Answer: ' + answer.selected, 20, 75 + i * 20);
+        doc.text('Correct Answer: ' + answer.correct, 20, 80 + i * 20);
     });
 
     let yPos = 70 + userAnswers.length * 20 + 10;
@@ -208,10 +217,12 @@ function generatePDF() {
 
     doc.text('Process Summary:', 10, yPos);
     steps.forEach((step, i) => {
-        doc.text(`${step['Order Number']}. ${step.Step}: ${step.Description}`, 10, yPos + 10 + i * 10);
+        const text = step['Order Number'] + '. ' + step.Step + ': ' + step.Description;
+        const lines = doc.splitTextToSize(text, 180);
+        doc.text(lines, 10, yPos + 10 + i * 15);
     });
 
-    doc.save(`Process_Report_${taskName}.pdf`);
+    doc.save('Process_Report_' + taskName + '.pdf');
 }
 
 function formatTime(ms) {
@@ -219,6 +230,6 @@ function formatTime(ms) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
 }
 ```
