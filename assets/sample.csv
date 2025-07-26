@@ -1,6 +1,23 @@
 ```csv
 Step,Description,Order Number,Image URL
-Mix Ingredients,"Combine flour, sugar, and eggs in a bowl",1,https://example.com/mix.jpg
-Bake,"Place in oven at 350°F for 30 minutes",2,https://example.com/bake.jpg
-Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg
+Gather Materials,Collect a jar of peanut butter, a jar of jelly, a loaf of bread, a butter knife, a plate, and a spoon,1,https://images.unsplash.com/photo-1600585154340-be6161a56a0c
+Prepare Workspace,Place all materials on a clean, flat surface like a kitchen counter,2,https://images.unsplash.com/photo-1556911220-bff31c812dba
+Wash Hands,Wash your hands with soap and water for 20 seconds and dry them,3,https://images.unsplash.com/photo-1584622650115-63cc3f2d41de
+Open Bread Bag,Untie or unclip the bread bag to access the bread slices,4,https://images.unsplash.com/photo-1583224947964-2ce0b0f8a844
+Select Bread Slices,Take two slices of bread from the bag and place them on the plate,5,https://images.unsplash.com/photo-1569350060188-3f0ff5f14b06
+Close Bread Bag,Retie or reclip the bread bag to keep the remaining bread fresh,6,https://images.unsplash.com/photo-1583224947964-2ce0b0f8a844
+Open Peanut Butter Jar,Twist the lid of the peanut butter jar counterclockwise to open it,7,https://images.unsplash.com/photo-1611078489932-4de79c1e6e17
+Scoop Peanut Butter,Use the butter knife to scoop a tablespoon of peanut butter from the jar,8,https://images.unsplash.com/photo-1611078489932-4de79c1e6e17
+Spread Peanut Butter,Spread the peanut butter evenly on one side of the first bread slice,9,https://images.unsplash.com/photo-1514329551177-3e6c3e4a8437
+Clean Knife,Wipe the knife clean with a paper towel or rinse it to remove peanut butter,10,https://images.unsplash.com/photo-1590330297626-d7abe3f5c260
+Open Jelly Jar,Twist the lid of the jelly jar counterclockwise to open it,11,https://images.unsplash.com/photo-1606859069129-b8e308e6d45b
+Scoop Jelly,Use the spoon to scoop a tablespoon of jelly from the jar,12,https://images.unsplash.com/photo-1606859069129-b8e308e6d45b
+Spread Jelly,Spread the jelly evenly on one side of the second bread slice,13,https://images.unsplash.com/photo-1514329551177-3e6c3e4a8437
+Combine Slices,Place the peanut butter side of the first slice onto the jelly side of the second slice,14,https://images.unsplash.com/photo-1514329551177-3e6c3e4a8437
+Press Sandwich,Gently press the slices together to ensure they stick,15,https://images.unsplash.com/photo-1514329551177-3e6c3e4a8437
+Cut Sandwich,Use the butter knife to cut the sandwich diagonally into two triangles,16,https://images.unsplash.com/photo-1590330297626-d7abe3f5c260
+Arrange Sandwich,Place the sandwich halves neatly on the plate,17,https://images.unsplash.com/photo-1514329551177-3e6c3e4a8437
+Close Jars,Tightly close the peanut butter and jelly jars by twisting the lids clockwise,18,https://images.unsplash.com/photo-1611078489932-4de79c1e6e17
+Clean Workspace,Wipe the counter and wash the knife and spoon with soap and water,19,https://images.unsplash.com/photo-1556911220-bff31c812dba
+Enjoy Sandwich,Serve the sandwich on the plate and enjoy your meal,20,https://images.unsplash.com/photo-1514329551177-3e6c3e4a8437
 ```
