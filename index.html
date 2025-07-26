@@ -1,0 +1,105 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideCraft</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="assets/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="theme-light min-h-screen flex flex-col">
+    <!-- Theme Selection -->
+    <div id="theme-selector" class="p-4">
+        <label for="theme" class="mr-2">Theme:</label>
+        <select id="theme" class="p-2 border rounded">
+            <option value="theme-light">Light</option>
+            <option value="theme-dark">Dark</option>
+            <option value="theme-blue">Blue</option>
+            <option value="theme-green">Green</option>
+        </select>
+    </div>
+
+    <!-- CSV Upload -->
+    <div id="upload-section" class="p-4 flex flex-col items-center">
+        <h1 class="text-2xl font-bold mb-4">SlideCraft</h1>
+        <input type="file" id="csv-file" accept=".csv" class="mb-4">
+        <button id="start-btn" class="bg-blue-500 text-white px-4 py-2 rounded">Start Presentation</button>
+        <p id="error" class="text-red-500 hidden mt-2"></p>
+    </div>
+
+    <!-- Presentation -->
+    <div id="presentation" class="hidden fixed inset-0 flex flex-col items-center justify-center p-4">
+        <h2 id="step-title" class="text-3xl font-bold mb-4"></h2>
+        <img id="step-image" class="max-h-1/2 object-contain mb-4" src="assets/placeholder.jpg" alt="Step Image">
+        <p id="step-description" class="text-lg mb-4"></p>
+        <div class="flex space-x-4">
+            <button id="prev-btn" class="bg-gray-500 text-white px-4 py-2 rounded">Previous</button>
+            <button id="next-btn" class="bg-blue-500 text-white px-4 py-2 rounded">Next</button>
+        </div>
+    </div>
+
+    <!-- Quiz -->
+    <div id="quiz" class="hidden p-4 flex flex-col items-center">
+        <h2 class="text-2xl font-bold mb-4">Quiz</h2>
+        <div id="question" class="mb-4"></div>
+        <div id="options" class="flex flex-col space-y-2"></div>
+        <p id="quiz-feedback" class="mt-4"></p>
+        <button id="next-question" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 hidden">Next Question</button>
+    </div>
+
+    <!-- Report -->
+    <div id="report" class="hidden p-4 flex flex-col items-center">
+        <h2 class="text-2xl font-bold mb-4">Generate Report</h2>
+        <input type="text" id="user-name" placeholder="Enter your name (optional)" class="p-2 border rounded mb-4">
+        <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="mb-4">
+        <img id="photo-preview" class="max-h-40 object-contain mb-4 hidden" alt="Photo Preview">
+        <button id="generate-report" class="bg-blue-500 text-white px-4 py-2 rounded">Download PDF Report</button>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+```
