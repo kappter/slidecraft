@@ -192,7 +192,7 @@ function generateQuiz() {
     quizScore = 0;
     userQuizResponses = [];
     quizContent.innerHTML = '';
-    const questionCount = 5;
+    const questionCount = Math.min(5, steps.length); // Ensure no more questions than steps
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
     
     shuffledSteps.forEach((step, index) => {
@@ -239,9 +239,9 @@ submitQuiz.addEventListener('click', () => {
         if (isCorrect) quizScore++;
         userQuizResponses.push({
             question: `Question ${index + 1}: What is Step ${steps.find(s => s.Step === answer.correctAnswer)['Order Number']}?`,
-            userAnswer: userAnswer,
+            userAnswer,
             correctAnswer: answer.correctAnswer,
-            isCorrect: isCorrect
+            isCorrect
         });
     });
     quizScreen.classList.add('hidden');
@@ -267,6 +267,9 @@ photoUpload.addEventListener('change', (event) => {
 // Report generation
 generateReport.addEventListener('click', () => {
     try {
+        if (!window.jspdf) {
+            throw new Error('jsPDF library not loaded');
+        }
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         const userName = userNameInput.value || 'Anonymous';
@@ -277,6 +280,7 @@ generateReport.addEventListener('click', () => {
         const minutes = Math.floor((timeTaken % 3600) / 60);
         const seconds = timeTaken % 60;
 
+        // Header
         doc.setFillColor(30, 64, 175);
         doc.rect(0, 0, 210, 20, 'F');
         doc.setFont('helvetica', 'bold');
@@ -284,6 +288,7 @@ generateReport.addEventListener('click', () => {
         doc.setTextColor(255, 255, 255);
         doc.text(`SlideCraft Report: ${taskName || 'Untitled'}`, 10, 15);
 
+        // User Info
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
@@ -291,10 +296,10 @@ generateReport.addEventListener('click', () => {
         doc.text(`Task: ${taskName || 'Untitled'}`, 10, 40);
         doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
         doc.text(`Average Time: 00:05:00`, 10, 60);
-        doc.setTextColor(34, 139, 34);
-        if (timeTaken > averageTime) doc.setTextColor(220, 20, 60);
+        doc.setTextColor(timeTaken <= averageTime ? 34 : 220, timeTaken <= averageTime ? 139 : 20, timeTaken <= averageTime ? 34 : 60);
         doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
 
+        // Quiz Results
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
         doc.setTextColor(0, 0, 0);
@@ -303,24 +308,27 @@ generateReport.addEventListener('click', () => {
         doc.setFontSize(10);
         let yPos = 100;
         userQuizResponses.forEach((response, index) => {
-            doc.text(response.question, 10, yPos);
-            doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
-            doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
-            doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60);
+            doc.text(response.question, 10, yPos, { maxWidth: 190 });
+            doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5, { maxWidth: 190 });
+            doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10, { maxWidth: 190 });
+            doc.setTextColor(response.isCorrect ? 34 : 220, response.isCorrect ? 139 : 20, response.isCorrect ? 34 : 60);
             doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
             doc.setTextColor(0, 0, 0);
             yPos += 25;
         });
 
+        // Process Steps
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(14);
         doc.text('Process Steps:', 10, yPos);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         steps.forEach((step, index) => {
-            doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''} (Duration: ${step.Duration}s)`, 10, yPos + 10 + index * 10);
+            const description = step.Description.substring(0, 50) + (step.Description.length > 50 ? '...' : '');
+            doc.text(`${index + 1}. ${step.Step}: ${description} (Duration: ${step.Duration}s)`, 10, yPos + 10 + index * 10, { maxWidth: 190 });
         });
 
+        // User Photo
         if (userPhoto && typeof userPhoto === 'string' && userPhoto.startsWith('data:image')) {
             try {
                 doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
