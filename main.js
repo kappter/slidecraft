@@ -26,10 +26,10 @@ const prevButton = document.getElementById('prev-button');
 const nextButton = document.getElementById('next-button');
 const quizContent = document.getElementById('quiz-content');
 const submitQuiz = document.getElementById('submit-quiz');
+const reportNameInput = document.getElementById('report-name');
 const userNameInput = document.getElementById('user-name');
 const photoUpload = document.getElementById('photo-upload');
 const photoPreview = document.getElementById('photo-preview');
-const generateReport = document.getElementById('generate-report');
 const autoAdvanceCheckbox = document.getElementById('auto-advance');
 const timeInfo = document.getElementById('time-info');
 const versionInfo = document.getElementById('version-info');
@@ -305,6 +305,8 @@ photoUpload.addEventListener('change', (event) => {
         photoPreview.classList.remove('hidden');
         if (reportPreview.classList.contains('hidden')) {
             generateReportPreview();
+        } else {
+            generateReportPreview();
         }
     };
     reader.readAsDataURL(file);
@@ -312,6 +314,7 @@ photoUpload.addEventListener('change', (event) => {
 
 // Report preview generation
 function generateReportPreview() {
+    const reportName = reportNameInput.value || 'Untitled_Report';
     const userName = userNameInput.value || 'Anonymous';
     const endTime = new Date();
     const timeTaken = startTime ? Math.floor((endTime - startTime) / 1000) : 0;
@@ -322,7 +325,7 @@ function generateReportPreview() {
 
     let html = `
         <div class="mb-6">
-            <h3 class="text-lg font-bold mb-2">SlideCraft Report: ${taskName || 'Untitled'}</h3>
+            <h3 class="text-lg font-bold mb-2">${reportName}</h3>
             <p><strong>Name:</strong> ${userName}</p>
             <p><strong>Task:</strong> ${taskName || 'Untitled'}</p>
             <p><strong>Time Taken:</strong> ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</p>
@@ -365,5 +368,8 @@ function generateReportPreview() {
 
 // Print report
 printReport.addEventListener('click', () => {
+    const reportName = reportNameInput.value || 'Untitled_Report';
     window.print();
+    // Note: Browser print dialog uses the page title for the PDF name; this is a limitation.
+    // For a custom filename, users can manually rename the saved PDF.
 });
