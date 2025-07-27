@@ -3,6 +3,8 @@ let steps = [];
 let currentStep = 0;
 let startTime = null;
 
+console.log('Script loaded and initialized');
+
 // DOM elements
 const uploadScreen = document.getElementById('upload-screen');
 const presentationScreen = document.getElementById('presentation-screen');
@@ -21,10 +23,12 @@ const generateReport = document.getElementById('generate-report');
 // Theme switching
 themeSelect.addEventListener('change', () => {
     document.body.className = `${themeSelect.value} min-h-screen flex items-center justify-center`;
+    console.log('Theme changed to', themeSelect.value);
 });
 
 // CSV upload
 csvUpload.addEventListener('change', (event) => {
+    console.log('CSV file selected');
     const file = event.target.files[0];
     if (!file) return;
     startButton.disabled = true;
@@ -33,28 +37,34 @@ csvUpload.addEventListener('change', (event) => {
     Papa.parse(file, {
         header: true,
         complete: (result) => {
+            console.log('CSV parsing complete', result);
             const requiredFields = ['Step', 'Description', 'Order Number'];
             if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
                 errorMessage.textContent = 'Invalid CSV: Needs Step, Description, Order Number.';
+                console.log('Invalid CSV fields:', result.meta.fields);
                 return;
             }
             steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
             if (steps.length === 0) {
                 errorMessage.textContent = 'No steps found.';
+                console.log('No steps in CSV');
                 return;
             }
             errorMessage.classList.add('hidden');
             startButton.disabled = false;
+            console.log('CSV validated, steps:', steps);
         },
         error: (error) => {
             errorMessage.textContent = `Error parsing CSV: ${error.message}. Check for extra commas or inconsistent rows.`;
             errorMessage.classList.remove('hidden');
+            console.log('CSV parsing error:', error);
         }
     });
 });
 
 // Start button
 startButton.addEventListener('click', () => {
+    console.log('Start button clicked, steps:', steps);
     if (!steps.length) return;
     startTime = new Date();
     showStep(0);
@@ -64,6 +74,7 @@ startButton.addEventListener('click', () => {
 
 // Presentation navigation
 function showStep(index) {
+    console.log('Showing step', index);
     if (index < 0 || index >= steps.length) return;
     currentStep = index;
     stepTitle.textContent = steps[index].Step;
@@ -72,8 +83,12 @@ function showStep(index) {
     nextButton.textContent = index === steps.length - 1 ? 'Finish' : 'Next';
 }
 
-prevButton.addEventListener('click', () => showStep(currentStep - 1));
+prevButton.addEventListener('click', () => {
+    console.log('Previous button clicked');
+    showStep(currentStep - 1);
+});
 nextButton.addEventListener('click', () => {
+    console.log('Next button clicked');
     if (currentStep === steps.length - 1) {
         presentationScreen.classList.add('hidden');
         reportScreen.classList.remove('hidden');
@@ -84,6 +99,7 @@ nextButton.addEventListener('click', () => {
 
 // Report generation
 generateReport.addEventListener('click', () => {
+    console.log('Generate report clicked');
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const userName = userNameInput.value || 'Anonymous';
