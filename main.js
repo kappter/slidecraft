@@ -81,7 +81,7 @@ assetsSelect.addEventListener('change', () => {
             }
         });
     } else {
-        startButton.disabled = true;
+        startButton.disabled = !csvUpload.files.length;
     }
 });
 
@@ -132,7 +132,6 @@ startButton.addEventListener('click', () => {
             }
         });
     } else {
-        // Asset already parsed in assetsSelect handler
         startTime = new Date();
         showStep(0);
         uploadScreen.classList.add('hidden');
@@ -267,63 +266,73 @@ photoUpload.addEventListener('change', (event) => {
 
 // Report generation
 generateReport.addEventListener('click', () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const userName = userNameInput.value || 'Anonymous';
-    const endTime = new Date();
-    const timeTaken = Math.floor((endTime - startTime) / 1000);
-    const averageTime = 300;
-    const hours = Math.floor(timeTaken / 3600);
-    const minutes = Math.floor((timeTaken % 3600) / 60);
-    const seconds = timeTaken % 60;
-    
-    doc.setFillColor(30, 64, 175);
-    doc.rect(0, 0, 210, 20, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255);
-    doc.text(`SlideCraft Report: ${taskName}`, 10, 15);
-    
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Name: ${userName}`, 10, 30);
-    doc.text(`Task: ${taskName}`, 10, 40);
-    doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
-    doc.text(`Average Time: 00:05:00`, 10, 60);
-    doc.setTextColor(34, 139, 34);
-    if (timeTaken > averageTime) doc.setTextColor(220, 20, 60);
-    doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
-    
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Quiz Score: ${quizScore}/5`, 10, 90);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    let yPos = 100;
-    userQuizResponses.forEach((response, index) => {
-        doc.text(response.question, 10, yPos);
-        doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
-        doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
-        doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60);
-        doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const userName = userNameInput.value || 'Anonymous';
+        const endTime = new Date();
+        const timeTaken = startTime ? Math.floor((endTime - startTime) / 1000) : 0;
+        const averageTime = 300;
+        const hours = Math.floor(timeTaken / 3600);
+        const minutes = Math.floor((timeTaken % 3600) / 60);
+        const seconds = timeTaken % 60;
+
+        doc.setFillColor(30, 64, 175);
+        doc.rect(0, 0, 210, 20, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(255, 255, 255);
+        doc.text(`SlideCraft Report: ${taskName || 'Untitled'}`, 10, 15);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-        yPos += 25;
-    });
-    
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Process Steps:', 10, yPos);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    steps.forEach((step, index) => {
-        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''} (Duration: ${step.Duration}s)`, 10, yPos + 10 + index * 10);
-    });
-    
-    if (userPhoto) {
-        doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
+        doc.text(`Name: ${userName}`, 10, 30);
+        doc.text(`Task: ${taskName || 'Untitled'}`, 10, 40);
+        doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
+        doc.text(`Average Time: 00:05:00`, 10, 60);
+        doc.setTextColor(34, 139, 34);
+        if (timeTaken > averageTime) doc.setTextColor(220, 20, 60);
+        doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Quiz Score: ${quizScore}/5`, 10, 90);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        let yPos = 100;
+        userQuizResponses.forEach((response, index) => {
+            doc.text(response.question, 10, yPos);
+            doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
+            doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
+            doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60);
+            doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
+            doc.setTextColor(0, 0, 0);
+            yPos += 25;
+        });
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(14);
+        doc.text('Process Steps:', 10, yPos);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        steps.forEach((step, index) => {
+            doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''} (Duration: ${step.Duration}s)`, 10, yPos + 10 + index * 10);
+        });
+
+        if (userPhoto && typeof userPhoto === 'string' && userPhoto.startsWith('data:image')) {
+            try {
+                doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
+            } catch (imgError) {
+                console.error('Error adding image to PDF:', imgError);
+            }
+        }
+
+        doc.save(`Process_Report_${taskName || 'Untitled'}.pdf`);
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        errorMessage.textContent = 'Failed to generate PDF report.';
+        errorMessage.classList.remove('hidden');
     }
-    
-    doc.save(`Process_Report_${taskName}.pdf`);
 });
