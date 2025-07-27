@@ -10,7 +10,7 @@ SlideCraft is a web-based application designed for high school students and educ
 - **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the report.
 - **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps, with no auto-advance.
 - **Photo Upload**: Optionally upload a photo (JPEG/PNG, max 5MB) to include in the report, showcasing the process results.
-- **Report Preview**: Displays a scrollable report in the browser with user info, quiz results, process steps, and uploaded photo, which can be printed or saved as PDF using the browser’s native functionality.
+- **Report Preview**: Displays a scrollable report in the browser with user info, quiz results, process steps, and uploaded photo, allowing users to enter their name and upload a photo before printing or saving as PDF using the browser’s native functionality.
 - **Responsive Design**: Works seamlessly on desktops, phones, and projectors using Tailwind CSS with a fixed, ultra-compact header and footer, featuring a super clean and professional look.
 - **Static Hosting**: Deployable on GitHub Pages with no server-side dependencies.
 
@@ -60,8 +60,8 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 4. Check 'Auto-Advance' to move slides automatically based on the Duration column (default 5 seconds).
 5. Click 'Start' to begin the guided process.
 6. Complete the 5-question multiple-choice quiz.
-7. Enter your name (optional) and upload a photo (JPEG/PNG, max 5MB) of your process results.
-8. View the report preview, then click "Print Report" to print or save it as a PDF using your browser.
+7. View the report preview, enter your name, and upload a photo (JPEG/PNG, max 5MB) of your process results.
+8. Click "Print Report" to print or save it as a PDF using your browser.
 9. Submit the printed or saved PDF to Canvas or your learning management system.
 
 ## CSV Format

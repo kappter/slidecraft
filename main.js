@@ -303,6 +303,9 @@ photoUpload.addEventListener('change', (event) => {
         userPhoto = reader.result;
         photoPreview.src = userPhoto;
         photoPreview.classList.remove('hidden');
+        if (reportPreview.classList.contains('hidden')) {
+            generateReportPreview();
+        }
     };
     reader.readAsDataURL(file);
 });
