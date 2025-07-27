@@ -157,6 +157,7 @@ function showStep(index) {
 prevButton.addEventListener('click', () => showStep(currentStep - 1));
 nextButton.addEventListener('click', () => {
     if (currentStep === steps.length - 1) {
+        if (autoAdvanceInterval) clearInterval(autoAdvanceInterval); // Clear interval before quiz
         presentationScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         generateQuiz();
@@ -167,11 +168,12 @@ nextButton.addEventListener('click', () => {
 
 // Auto-advance function
 function startAutoAdvance() {
+    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
     autoAdvanceInterval = setInterval(() => {
         if (currentStep < steps.length - 1) {
             showStep(currentStep + 1);
         } else {
-            clearInterval(autoAdvanceInterval);
+            clearInterval(autoAdvanceInterval); // Clear when reaching the end
             presentationScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
             generateQuiz();
@@ -188,11 +190,12 @@ document.addEventListener('keydown', (event) => {
 
 // Quiz generation
 function generateQuiz() {
+    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval); // Ensure no auto-advance on quiz
     quizAnswers = [];
     quizScore = 0;
     userQuizResponses = [];
     quizContent.innerHTML = '';
-    const questionCount = Math.min(5, steps.length); // Ensure no more questions than steps
+    const questionCount = Math.min(5, steps.length);
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
     
     shuffledSteps.forEach((step, index) => {
