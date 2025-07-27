@@ -7,6 +7,7 @@ let quizScore = 0;
 let taskName = '';
 let userPhoto = null;
 let userQuizResponses = [];
+let csvData = null; // Store parsed CSV data until Start is clicked
 
 // DOM elements
 const uploadScreen = document.getElementById('upload-screen');
@@ -15,6 +16,7 @@ const quizScreen = document.getElementById('quiz-screen');
 const reportScreen = document.getElementById('report-screen');
 const csvSelect = document.getElementById('csv-select');
 const csvUpload = document.getElementById('csv-upload');
+const startButton = document.getElementById('start-button');
 const themeSelect = document.getElementById('theme-select');
 const errorMessage = document.getElementById('error-message');
 const stepTitle = document.getElementById('step-title');
@@ -31,14 +33,17 @@ const generateReport = document.getElementById('generate-report');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
-    document.body.className = themeSelect.value + ' min-h-screen flex flex-col items-center justify-center';
+    document.body.className = `${themeSelect.value} min-h-screen flex flex-col items-center justify-center`;
 });
 
 // CSV selection handling
 csvSelect.addEventListener('change', () => {
+    csvData = null;
+    startButton.disabled = true;
+    errorMessage.classList.add('hidden');
     if (csvSelect.value === 'custom') {
         csvUpload.classList.remove('hidden');
-        csvUpload.value = ''; // Clear file input
+        csvUpload.value = '';
     } else {
         csvUpload.classList.add('hidden');
         loadPreloadedCSV(csvSelect.value);
@@ -47,6 +52,9 @@ csvSelect.addEventListener('change', () => {
 
 // Load pre-loaded CSV
 function loadPreloadedCSV(fileName) {
+    startButton.disabled = true;
+    errorMessage.textContent = 'Loading...';
+    errorMessage.classList.remove('hidden');
     const csvPath = `assets/${fileName}.csv`;
     taskName = fileName.replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
     fetch(csvPath)
@@ -58,29 +66,14 @@ function loadPreloadedCSV(fileName) {
             Papa.parse(csvText, {
                 header: true,
                 complete: (result) => {
-                    const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
-                    if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
-                        errorMessage.textContent = 'Invalid CSV format.';
-                        errorMessage.classList.remove('hidden');
-                        return;
-                    }
-                    errorMessage.classList.add('hidden');
-                    steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
-                    if (steps.length === 0) {
-                        errorMessage.textContent = 'No valid steps found in CSV.';
-                        errorMessage.classList.remove('hidden');
-                        return;
-                    }
-                    startTime = new Date();
-                    showStep(0);
-                    uploadScreen.classList.add('hidden');
-                    presentationScreen.classList.remove('hidden');
+                    validateCSV(result, fileName);
                 }
             });
         })
         .catch(() => {
-            errorMessage.textContent = 'Failed to load pre-loaded CSV.';
+            errorMessage.textContent = `Failed to load ${taskName}.`;
             errorMessage.classList.remove('hidden');
+            startButton.disabled = true;
         });
 }
 
@@ -88,28 +81,49 @@ function loadPreloadedCSV(fileName) {
 csvUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
+    startButton.disabled = true;
+    errorMessage.textContent = 'Loading...';
+    errorMessage.classList.remove('hidden');
     taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
     Papa.parse(file, {
         header: true,
         complete: (result) => {
-            const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
-            if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
-                errorMessage.classList.remove('hidden');
-                return;
-            }
-            errorMessage.classList.add('hidden');
-            steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
-            if (steps.length === 0) {
-                errorMessage.textContent = 'No valid steps found in CSV.';
-                errorMessage.classList.remove('hidden');
-                return;
-            }
-            startTime = new Date();
-            showStep(0);
-            uploadScreen.classList.add('hidden');
-            presentationScreen.classList.remove('hidden');
+            validateCSV(result, file.name);
         }
     });
+});
+
+// Validate CSV
+function validateCSV(result, fileName) {
+    const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
+    if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+        errorMessage.textContent = `Invalid CSV format in ${fileName}. Please ensure it contains Step, Description, Order Number, and Image URL columns.`;
+        errorMessage.classList.remove('hidden');
+        startButton.disabled = true;
+        csvData = null;
+        return;
+    }
+    const parsedSteps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+    if (parsedSteps.length === 0) {
+        errorMessage.textContent = `No valid steps found in ${fileName}.`;
+        errorMessage.classList.remove('hidden');
+        startButton.disabled = true;
+        csvData = null;
+        return;
+    }
+    errorMessage.classList.add('hidden');
+    csvData = parsedSteps;
+    startButton.disabled = false;
+}
+
+// Start button
+startButton.addEventListener('click', () => {
+    if (!csvData) return;
+    steps = csvData;
+    startTime = new Date();
+    showStep(0);
+    uploadScreen.classList.add('hidden');
+    presentationScreen.classList.remove('hidden');
 });
 
 // Presentation navigation
