@@ -1,43 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -94,7 +55,8 @@
         </section>
 
         <section id="presentation-screen" class="hidden h-full flex flex-col items-center justify-center">
-            <h2 id="step-title" class="text-2xl font-bold mb-4"></h2>
+            <h2 id="step-title" class="text-2xl font-bold mb-2"></h2>
+            <p id="step-number" class="text-sm font-medium mb-4"></p>
             <p id="step-description" class="mb-4 text-center max-w-md"></p>
             <img id="step-image" class="mb-4 max-w-full h-auto" src="assets/placeholder.jpg" alt="Step Image">
             <div class="flex space-x-4">
@@ -124,8 +86,9 @@
         </section>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full bg-opacity-90 p-1 text-center z-10">
-        <p class="text-xs">Version: 002-001-001-009</p>
+    <footer id="footer" class="fixed bottom-0 left-0 w-full bg-opacity-90 p-1 text-center z-10">
+        <p id="time-info" class="text-xs"></p>
+        <p id="version-info" class="text-xs">Version: 002-001-001-012</p>
     </footer>
 </body>
 </html>
