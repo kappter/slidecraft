@@ -1,4 +1,43 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,45 +51,45 @@
     <script src="main.js" defer></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col">
-    <header class="fixed top-0 left-0 w-full bg-opacity-90 p-4 z-10">
-        <div class="flex justify-between items-center">
+    <header class="fixed top-0 left-0 w-full bg-opacity-90 p-2 z-10">
+        <div class="flex items-center justify-between">
             <h1 class="text-2xl font-bold">SlideCraft</h1>
-            <select id="theme-select" class="p-2 border rounded">
+            <select id="theme-select" class="p-2 border rounded-lg">
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
         </div>
     </header>
 
-    <main class="flex-grow pt-16 pb-16 px-4">
-        <section id="upload-screen">
-            <h2 class="text-xl font-semibold mb-4">Welcome to SlideCraft</h2>
-            <p class="mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
-            <ul class="list-disc pl-5 mb-4">
-                <li>Select a theme (Light or Dark) for best visibility.</li>
-                <li>Upload a CSV file with steps (Step, Description, Order Number, Image URL, Duration).</li>
-                <li>Check 'Auto-Advance' to move slides automatically based on duration (default 5 seconds).</li>
-                <li>Click 'Start' to begin the guided process.</li>
-                <li>Complete the quiz and generate a PDF report.</li>
+    <main class="flex-grow pt-12 pb-12 px-4">
+        <section id="upload-screen" class="max-w-2xl mx-auto">
+            <h2 class="text-lg font-semibold mb-6">Welcome to SlideCraft</h2>
+            <p class="text-base font-medium mb-6">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
+            <ul class="list-disc pl-5 mb-6">
+                <li class="text-base font-medium mb-2">Select a theme (Light or Dark) for best visibility.</li>
+                <li class="text-base font-medium mb-2">Upload a CSV file with steps (Step, Description, Order Number, Image URL, Duration).</li>
+                <li class="text-base font-medium mb-2">Check 'Auto-Advance' to move slides automatically based on duration (default 5 seconds).</li>
+                <li class="text-base font-medium mb-2">Click 'Start' to begin the guided process.</li>
+                <li class="text-base font-medium mb-2">Complete the quiz and generate a PDF report.</li>
             </ul>
-            <p class="mb-4">Our vision: Empower learning with simple, mobile-friendly tools for process mastery.</p>
-            <div class="mb-4">
-                <label class="flex items-center">
+            <p class="text-base font-medium mb-6">Our vision: Empower learning with simple, mobile-friendly tools for process mastery.</p>
+            <div class="mb-6">
+                <label class="flex items-center text-base font-medium mb-3">
                     <input type="checkbox" id="auto-advance" class="mr-2">
                     Auto-Advance Slides
                 </label>
             </div>
-            <div class="mb-4">
-                <label for="csv-upload" class="block mb-2">Upload CSV</label>
-                <input type="file" id="csv-upload" accept=".csv" class="p-2 border rounded">
+            <div class="mb-6">
+                <label for="csv-upload" class="block text-base font-medium mb-3">Upload CSV</label>
+                <input type="file" id="csv-upload" accept=".csv" class="p-2 border rounded-lg w-full">
             </div>
-            <div class="mb-4">
-                <label for="assets-select" class="block mb-2">Select Asset</label>
-                <select id="assets-select" class="p-2 border rounded">
+            <div class="mb-6">
+                <label for="assets-select" class="block text-base font-medium mb-3">Select Asset</label>
+                <select id="assets-select" class="p-2 border rounded-lg w-full">
                     <option value="">Select an asset</option>
                 </select>
             </div>
-            <button id="start-button" class="p-2 bg-blue-500 text-white rounded disabled:bg-gray-300" disabled>Start</button>
+            <button id="start-button" class="p-2 bg-blue-500 text-white rounded-lg shadow-md disabled:bg-gray-300" disabled>Start</button>
             <p id="error-message" class="hidden error-message">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
         </section>
 
@@ -59,34 +98,34 @@
             <p id="step-description" class="mb-4 text-center max-w-md"></p>
             <img id="step-image" class="mb-4 max-w-full h-auto" src="assets/placeholder.jpg" alt="Step Image">
             <div class="flex space-x-4">
-                <button id="prev-button" class="p-2 bg-gray-500 text-white rounded hidden">Previous</button>
-                <button id="next-button" class="p-2 bg-blue-500 text-white rounded">Next</button>
+                <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hidden">Previous</button>
+                <button id="next-button" class="p-2 bg-blue-500 text-white rounded-lg shadow-md">Next</button>
             </div>
         </section>
 
         <section id="quiz-screen" class="hidden">
             <h2 class="text-xl font-semibold mb-4">Quiz</h2>
             <div id="quiz-content"></div>
-            <button id="submit-quiz" class="p-2 bg-blue-500 text-white rounded hidden">Submit Quiz</button>
+            <button id="submit-quiz" class="p-2 bg-blue-500 text-white rounded-lg shadow-md hidden">Submit Quiz</button>
         </section>
 
         <section id="report-screen" class="hidden">
             <h2 class="text-xl font-semibold mb-4">Generate Report</h2>
-            <div class="mb-4">
-                <label for="user-name" class="block mb-2">Your Name</label>
-                <input type="text" id="user-name" class="p-2 border rounded w-full max-w-xs">
+            <div class="mb-6">
+                <label for="user-name" class="block text-base font-medium mb-3">Your Name</label>
+                <input type="text" id="user-name" class="p-2 border rounded-lg w-full max-w-xs">
             </div>
-            <div class="mb-4">
-                <label for="photo-upload" class="block mb-2">Upload Photo</label>
-                <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="p-2 border rounded">
+            <div class="mb-6">
+                <label for="photo-upload" class="block text-base font-medium mb-3">Upload Photo</label>
+                <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="p-2 border rounded-lg">
                 <img id="photo-preview" class="hidden mt-2 max-w-xs" src="" alt="Photo Preview">
             </div>
-            <button id="generate-report" class="p-2 bg-blue-500 text-white rounded">Generate PDF Report</button>
+            <button id="generate-report" class="p-2 bg-blue-500 text-white rounded-lg shadow-md">Generate PDF Report</button>
         </section>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full bg-opacity-90 p-4 text-center z-10">
-        <p>Version: 002-001-001-005</p>
+    <footer class="fixed bottom-0 left-0 w-full bg-opacity-90 p-2 text-center z-10">
+        <p class="text-sm">Version: 002-001-001-007</p>
     </footer>
 </body>
 </html>
