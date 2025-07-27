@@ -20,6 +20,8 @@ const nextButton = document.getElementById('next-button');
 const userNameInput = document.getElementById('user-name');
 const generateReport = document.getElementById('generate-report');
 
+console.log('DOM elements:', { csvUpload, startButton, themeSelect, errorMessage });
+
 // Theme switching
 themeSelect.addEventListener('change', () => {
     document.body.className = `${themeSelect.value} min-h-screen flex items-center justify-center`;
@@ -28,9 +30,12 @@ themeSelect.addEventListener('change', () => {
 
 // CSV upload
 csvUpload.addEventListener('change', (event) => {
-    console.log('CSV file selected');
+    console.log('CSV file selected, file:', event.target.files[0]);
     const file = event.target.files[0];
-    if (!file) return;
+    if (!file) {
+        console.log('No file selected');
+        return;
+    }
     startButton.disabled = true;
     errorMessage.textContent = 'Loading...';
     errorMessage.classList.remove('hidden');
@@ -110,7 +115,7 @@ generateReport.addEventListener('click', () => {
     doc.text(`SlideCraft Report - ${userName}`, 10, 10);
     doc.text(`Time Taken: ${Math.floor(timeTaken / 60)}m ${timeTaken % 60}s`, 10, 20);
     doc.text('Steps:', 10, 30);
-    steps.forEach((step, index) => {
+    steps.forElementEach((step, index) => {
         doc.text(`${index + 1}. ${step.Step}: ${step.Description}`, 10, 40 + index * 10);
     });
 
