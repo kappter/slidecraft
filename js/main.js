@@ -13,6 +13,7 @@ const uploadScreen = document.getElementById('upload-screen') || console.error('
 const presentationScreen = document.getElementById('presentation-screen') || console.error('presentation-screen not found');
 const quizScreen = document.getElementById('quiz-screen') || console.error('quiz-screen not found');
 const reportScreen = document.getElementById('report-screen') || console.error('report-screen not found');
+const csvSelect = document.getElementById('csv-select') || console.error('csv-select not found');
 const csvUpload = document.getElementById('csv-upload') || console.error('csv-upload not found');
 const startButton = document.getElementById('start-button') || console.error('start-button not found');
 const themeSelect = document.getElementById('theme-select') || console.error('theme-select not found');
@@ -28,12 +29,67 @@ const submitQuiz = document.getElementById('submit-quiz') || console.error('subm
 const userNameInput = document.getElementById('user-name') || console.error('user-name not found');
 const generateReport = document.getElementById('generate-report') || console.error('generate-report not found');
 
-console.log('DOM elements checked:', { csvUpload, startButton, timeDisplay });
+console.log('DOM elements checked:', { csvSelect, csvUpload, startButton, timeDisplay });
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
     document.body.className = `${themeSelect.value} min-h-screen flex items-center justify-center`;
     console.log('Theme changed to', themeSelect.value);
+});
+
+// CSV selection from dropdown
+csvSelect.addEventListener('change', () => {
+    console.log('CSV selected from dropdown, value:', csvSelect.value);
+    if (csvSelect.value === 'custom') {
+        csvUpload.classList.remove('hidden');
+        startButton.disabled = true;
+        console.log('Switched to custom upload mode');
+    } else {
+        csvUpload.classList.add('hidden');
+        startButton.disabled = true;
+        errorMessage.textContent = 'Loading preloaded CSV...';
+        errorMessage.classList.remove('hidden');
+        fetch(csvSelect.value)
+            .then(response => {
+                console.log('Fetch response:', response);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.text();
+            })
+            .then(csvText => {
+                console.log('Fetched CSV text:', csvText.substring(0, 100)); // Log first 100 chars
+                Papa.parse(csvText, {
+                    header: true,
+                    complete: (result) => {
+                        console.log('Preloaded CSV parsed, result:', result);
+                        const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
+                        if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+                            errorMessage.textContent = 'Invalid CSV: Needs Step, Description, Order Number, Image URL.';
+                            console.log('Invalid preloaded CSV fields:', result.meta.fields);
+                            return;
+                        }
+                        steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+                        estimatedTime = steps.length * 150; // 150 seconds per step
+                        console.log('Sorted steps from preloaded:', steps);
+                        if (steps.length === 0) {
+                            errorMessage.textContent = 'No steps found.';
+                            console.log('No steps in preloaded CSV');
+                            return;
+                        }
+                        errorMessage.classList.add('hidden');
+                        startButton.disabled = false;
+                        console.log('Start button enabled from preloaded, steps count:', steps.length);
+                    },
+                    error: (error) => {
+                        errorMessage.textContent = `Error parsing preloaded CSV: ${error.message}`;
+                        console.log('Preloaded CSV parsing error:', error);
+                    }
+                });
+            })
+            .catch(error => {
+                errorMessage.textContent = `Failed to load ${csvSelect.value}: ${error.message}`;
+                console.log('Fetch error for', csvSelect.value, error);
+            });
+    }
 });
 
 // CSV upload
@@ -58,7 +114,6 @@ csvUpload.addEventListener('change', (event) => {
                 return;
             }
             steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
-            // Adjust estimated time based on step count (e.g., 2.5 min per step)
             estimatedTime = steps.length * 150; // 150 seconds per step
             console.log('Sorted steps:', steps);
             if (steps.length === 0) {
@@ -68,7 +123,7 @@ csvUpload.addEventListener('change', (event) => {
             }
             errorMessage.classList.add('hidden');
             startButton.disabled = false;
-            console.log('Start button enabled, steps count:', steps.length, 'estimated time:', estimatedTime);
+            console.log('Start button enabled, steps count:', steps.length);
         },
         error: (error) => {
             errorMessage.textContent = `Error parsing CSV: ${error.message}`;
