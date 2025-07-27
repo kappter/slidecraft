@@ -186,9 +186,9 @@ submitQuiz.addEventListener('click', () => {
         if (isCorrect) quizScore++;
         userQuizResponses.push({
             question: `Question ${index + 1}: What is Step ${steps.find(s => s.Step === answer.correctAnswer)['Order Number']}?`,
-            userAnswer,
+            userAnswer: userAnswer,
             correctAnswer: answer.correctAnswer,
-            isCorrect
+            isCorrect: isCorrect
         });
     });
     quizScreen.classList.add('hidden');
