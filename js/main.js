@@ -6,13 +6,14 @@ let quizAnswers = [];
 let quizScore = 0;
 let taskName = '';
 let userPhoto = null;
-let userQuizResponses = []; // Store user answers for report
+let userQuizResponses = [];
 
 // DOM elements
 const uploadScreen = document.getElementById('upload-screen');
 const presentationScreen = document.getElementById('presentation-screen');
 const quizScreen = document.getElementById('quiz-screen');
 const reportScreen = document.getElementById('report-screen');
+const csvSelect = document.getElementById('csv-select');
 const csvUpload = document.getElementById('csv-upload');
 const themeSelect = document.getElementById('theme-select');
 const errorMessage = document.getElementById('error-message');
@@ -33,7 +34,57 @@ themeSelect.addEventListener('change', () => {
     document.body.className = themeSelect.value + ' min-h-screen flex flex-col items-center justify-center';
 });
 
-// CSV upload
+// CSV selection handling
+csvSelect.addEventListener('change', () => {
+    if (csvSelect.value === 'custom') {
+        csvUpload.classList.remove('hidden');
+        csvUpload.value = ''; // Clear file input
+    } else {
+        csvUpload.classList.add('hidden');
+        loadPreloadedCSV(csvSelect.value);
+    }
+});
+
+// Load pre-loaded CSV
+function loadPreloadedCSV(fileName) {
+    const csvPath = `assets/${fileName}.csv`;
+    taskName = fileName.replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
+    fetch(csvPath)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to load CSV');
+            return response.text();
+        })
+        .then(csvText => {
+            Papa.parse(csvText, {
+                header: true,
+                complete: (result) => {
+                    const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
+                    if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+                        errorMessage.textContent = 'Invalid CSV format.';
+                        errorMessage.classList.remove('hidden');
+                        return;
+                    }
+                    errorMessage.classList.add('hidden');
+                    steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+                    if (steps.length === 0) {
+                        errorMessage.textContent = 'No valid steps found in CSV.';
+                        errorMessage.classList.remove('hidden');
+                        return;
+                    }
+                    startTime = new Date();
+                    showStep(0);
+                    uploadScreen.classList.add('hidden');
+                    presentationScreen.classList.remove('hidden');
+                }
+            });
+        })
+        .catch(() => {
+            errorMessage.textContent = 'Failed to load pre-loaded CSV.';
+            errorMessage.classList.remove('hidden');
+        });
+}
+
+// Custom CSV upload
 csvUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -95,7 +146,7 @@ document.addEventListener('keydown', (event) => {
 function generateQuiz() {
     quizAnswers = [];
     quizScore = 0;
-    userQuizResponses = []; // Reset user responses
+    userQuizResponses = [];
     quizContent.innerHTML = '';
     const questionCount = 5;
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
@@ -139,100 +190,5 @@ submitQuiz.addEventListener('click', () => {
     userQuizResponses = [];
     quizAnswers.forEach((answer, index) => {
         const selected = document.querySelector(`input[name="question-${index}"]:checked`);
-        const userAnswer = selected ? selected.value : 'No answer'; // Fixed comma to semicolon
-        const isCorrect = selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value;
-        if (isCorrect) quizScore++;
-        userQuizResponses.push({
-            question: `Question ${index + 1}: What is Step ${steps.find(s => s.Step === answer.correctAnswer)['Order Number']}?`,
-            userAnswer,
-            correctAnswer: answer.correctAnswer,
-            isCorrect
-        });
-    });
-    quizScreen.classList.add('hidden');
-    reportScreen.classList.remove('hidden');
-});
-
-// Photo upload
-photoUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (!file || file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
-        alert('Please upload a JPEG or PNG image under 5MB.');
-        return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-        userPhoto = reader.result;
-        photoPreview.src = userPhoto;
-        photoPreview.classList.remove('hidden');
-    };
-    reader.readAsDataURL(file);
-});
-
-// Report generation
-generateReport.addEventListener('click', () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const userName = userNameInput.value || 'Anonymous';
-    const endTime = new Date();
-    const timeTaken = Math.floor((endTime - startTime) / 1000);
-    const averageTime = 300; // Assumed average time in seconds (5 minutes)
-    const hours = Math.floor(timeTaken / 3600);
-    const minutes = Math.floor((timeTaken % 3600) / 60);
-    const seconds = timeTaken % 60;
-    
-    // Header
-    doc.setFillColor(30, 64, 175); // Blue background
-    doc.rect(0, 0, 210, 20, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255); // White text
-    doc.text(`SlideCraft Report: ${taskName}`, 10, 15);
-    
-    // User Info Section
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0); // Black text
-    doc.text(`Name: ${userName}`, 10, 30);
-    doc.text(`Task: ${taskName}`, 10, 40);
-    doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
-    doc.text(`Average Time: 00:05:00`, 10, 60);
-    doc.setTextColor(34, 139, 34); // Green if faster
-    if (timeTaken > averageTime) doc.setTextColor(220, 20, 60); // Red if slower
-    doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
-    
-    // Quiz Results Section
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Quiz Score: ${quizScore}/5`, 10, 90);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    let yPos = 100;
-    userQuizResponses.forEach((response, index) => {
-        doc.text(response.question, 10, yPos);
-        doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
-        doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
-        doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60); // Green for correct, red for incorrect
-        doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
-        doc.setTextColor(0, 0, 0);
-        yPos += 25;
-    });
-    
-    // Process Steps Section
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Process Steps:', 10, yPos);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    steps.forEach((step, index) => {
-        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''}`, 10, yPos + 10 + index * 10);
-    });
-    
-    // Add User Photo
-    if (userPhoto) {
-        doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
-    }
-    
-    doc.save(`Process_Report_${taskName}.pdf`);
-});
+        const userAnswer = selected ? selected.value : 'No answer';
+        const isCorrect = selected && selected.value === quizContent.querySelectorAll
