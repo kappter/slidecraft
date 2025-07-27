@@ -282,5 +282,5 @@ generateReport.addEventListener('click', () => {
         doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
     }
     
-    doc.save(`Process_Report_${taskName}.pdf');
+    doc.save(`Process_Report_${taskName}.pdf`);
 });
