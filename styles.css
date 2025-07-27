@@ -27,16 +27,41 @@ button:disabled {
 }
 
 /* Ensure inputs and buttons inherit theme colors */
+.light-theme header, .light-theme footer {
+    background-color: #e5e7eb; /* Tailwind gray-200 */
+}
 .light-theme input, .light-theme select, .light-theme button {
     background-color: #ffffff;
     color: #1f2937;
     border-color: #d1d5db; /* Tailwind gray-300 */
 }
 
-.dark-theme input, .dark-theme select, .dark-theme button {
+.dark-theme header, .dark-theme footer {
     background-color: #374151; /* Tailwind gray-700 */
+}
+.dark-theme input, .dark-theme select, .dark-theme button {
+    background-color: #4b5563; /* Tailwind gray-600 */
     color: #f3f4f6;
-    border-color: #4b5563; /* Tailwind gray-600 */
+    border-color: #6b7280; /* Tailwind gray-500 */
+}
+
+/* Fixed Header and Footer */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background-opacity: 0.9;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background-opacity: 0.9;
 }
 
 /* Responsive image sizing */
