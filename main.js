@@ -7,6 +7,7 @@ let quizScore = 0;
 let taskName = '';
 let userPhoto = null;
 let userQuizResponses = [];
+let autoAdvanceInterval = null;
 
 // DOM elements
 const uploadScreen = document.getElementById('upload-screen');
@@ -29,36 +30,21 @@ const userNameInput = document.getElementById('user-name');
 const photoUpload = document.getElementById('photo-upload');
 const photoPreview = document.getElementById('photo-preview');
 const generateReport = document.getElementById('generate-report');
+const autoAdvanceCheckbox = document.getElementById('auto-advance');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
-    document.body.className = themeSelect.value + ' min-h-screen flex flex-col items-center justify-center';
+    document.body.className = themeSelect.value + ' min-h-screen flex flex-col';
 });
 
-// Populate assets dropdown (static list; replace with dynamic fetch if available)
-const assetsList = ['placeholder.jpg', 'favicon.ico']; // Add more assets as needed
+// Populate assets dropdown
+const assetsList = ['placeholder.jpg', 'favicon.ico']; // Update with your assets
 assetsList.forEach(asset => {
     const option = document.createElement('option');
     option.value = `assets/${asset}`;
     option.textContent = asset;
     assetsSelect.appendChild(option);
 });
-
-// Optional: Dynamic fetch for assets (requires server endpoint)
-// Uncomment and configure if you have a server listing assets
-/*
-fetch('/assets-list') // Replace with your endpoint
-    .then(response => response.json())
-    .then(files => {
-        files.forEach(file => {
-            const option = document.createElement('option');
-            option.value = `assets/${file}`;
-            option.textContent = file;
-            assetsSelect.appendChild(option);
-        });
-    })
-    .catch(err => console.error('Error fetching assets:', err));
-*/
 
 // Start button handler
 startButton.addEventListener('click', () => {
@@ -72,14 +58,17 @@ startButton.addEventListener('click', () => {
     Papa.parse(file, {
         header: true,
         complete: (result) => {
-            const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
+            const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL', 'Duration'];
             if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
-                errorMessage.textContent = 'Invalid CSV file. Please ensure it contains Step, Description, Order Number, and Image URL columns.';
+                errorMessage.textContent = 'Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.';
                 errorMessage.classList.remove('hidden');
                 return;
             }
             errorMessage.classList.add('hidden');
-            steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+            steps = result.data.map(step => ({
+                ...step,
+                Duration: parseInt(step.Duration) || 5 // Default to 5 seconds if not specified
+            })).sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
             if (steps.length === 0) {
                 errorMessage.textContent = 'No valid steps found in CSV.';
                 errorMessage.classList.remove('hidden');
@@ -89,6 +78,7 @@ startButton.addEventListener('click', () => {
             showStep(0);
             uploadScreen.classList.add('hidden');
             presentationScreen.classList.remove('hidden');
+            if (autoAdvanceCheckbox.checked) startAutoAdvance();
         },
         error: (err) => {
             errorMessage.textContent = 'Error parsing CSV file.';
@@ -98,9 +88,9 @@ startButton.addEventListener('click', () => {
     });
 });
 
-// CSV upload (optional, for direct file selection)
+// CSV upload event
 csvUpload.addEventListener('change', () => {
-    startButton.disabled = !csvUpload.files.length; // Enable Start button when file is selected
+    startButton.disabled = !csvUpload.files.length;
 });
 
 // Presentation navigation
@@ -113,6 +103,8 @@ function showStep(index) {
     stepImage.onerror = () => { stepImage.src = 'assets/placeholder.jpg'; };
     prevButton.classList.toggle('hidden', index === 0);
     nextButton.textContent = index === steps.length - 1 ? 'Start Quiz' : 'Next';
+    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval); // Clear previous interval
+    if (autoAdvanceCheckbox.checked && index < steps.length - 1) startAutoAdvance();
 }
 
 prevButton.addEventListener('click', () => showStep(currentStep - 1));
@@ -125,6 +117,20 @@ nextButton.addEventListener('click', () => {
         showStep(currentStep + 1);
     }
 });
+
+// Auto-advance function
+function startAutoAdvance() {
+    autoAdvanceInterval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+            showStep(currentStep + 1);
+        } else {
+            clearInterval(autoAdvanceInterval);
+            presentationScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            generateQuiz();
+        }
+    }, steps[currentStep].Duration * 1000); // Convert seconds to milliseconds
+}
 
 // Keyboard navigation
 document.addEventListener('keydown', (event) => {
@@ -268,7 +274,7 @@ generateReport.addEventListener('click', () => {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     steps.forEach((step, index) => {
-        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''}`, 10, yPos + 10 + index * 10);
+        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''} (Duration: ${step.Duration}s)`, 10, yPos + 10 + index * 10);
     });
     
     // Add User Photo
@@ -276,5 +282,5 @@ generateReport.addEventListener('click', () => {
         doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
     }
     
-    doc.save(`Process_Report_${taskName}.pdf`);
+    doc.save(`Process_Report_${taskName}.pdf');
 });
