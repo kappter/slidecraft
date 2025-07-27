@@ -7,6 +7,7 @@ let taskName = '';
 let userPhoto = null;
 let userQuizResponses = [];
 let autoAdvanceInterval = null;
+let timeInterval = null;
 
 const uploadScreen = document.getElementById('upload-screen');
 const presentationScreen = document.getElementById('presentation-screen');
@@ -18,6 +19,7 @@ const themeSelect = document.getElementById('theme-select');
 const assetsSelect = document.getElementById('assets-select');
 const errorMessage = document.getElementById('error-message');
 const stepTitle = document.getElementById('step-title');
+const stepNumber = document.getElementById('step-number');
 const stepDescription = document.getElementById('step-description');
 const stepImage = document.getElementById('step-image');
 const prevButton = document.getElementById('prev-button');
@@ -29,6 +31,8 @@ const photoUpload = document.getElementById('photo-upload');
 const photoPreview = document.getElementById('photo-preview');
 const generateReport = document.getElementById('generate-report');
 const autoAdvanceCheckbox = document.getElementById('auto-advance');
+const timeInfo = document.getElementById('time-info');
+const versionInfo = document.getElementById('version-info');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
@@ -130,6 +134,7 @@ startButton.addEventListener('click', () => {
                 uploadScreen.classList.add('hidden');
                 presentationScreen.classList.remove('hidden');
                 if (autoAdvanceCheckbox.checked) startAutoAdvance();
+                startTimeUpdate();
             },
             error: (err) => {
                 errorMessage.textContent = 'Error parsing CSV file.';
@@ -143,6 +148,7 @@ startButton.addEventListener('click', () => {
         uploadScreen.classList.add('hidden');
         presentationScreen.classList.remove('hidden');
         if (autoAdvanceCheckbox.checked) startAutoAdvance();
+        startTimeUpdate();
     }
 });
 
@@ -151,6 +157,7 @@ function showStep(index) {
     if (index < 0 || index >= steps.length) return;
     currentStep = index;
     stepTitle.textContent = steps[index].Step;
+    stepNumber.textContent = `Step ${index + 1} of ${steps.length}`;
     stepDescription.textContent = steps[index].Description;
     stepImage.src = steps[index]['Image URL'] || 'assets/placeholder.jpg';
     stepImage.onerror = () => { stepImage.src = 'assets/placeholder.jpg'; };
@@ -164,6 +171,7 @@ prevButton.addEventListener('click', () => showStep(currentStep - 1));
 nextButton.addEventListener('click', () => {
     if (currentStep === steps.length - 1) {
         if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
+        if (timeInterval) clearInterval(timeInterval);
         presentationScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         generateQuiz();
@@ -180,11 +188,33 @@ function startAutoAdvance() {
             showStep(currentStep + 1);
         } else {
             clearInterval(autoAdvanceInterval);
+            if (timeInterval) clearInterval(timeInterval);
             presentationScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
             generateQuiz();
         }
     }, steps[currentStep].Duration * 1000);
+}
+
+// Time update function
+function startTimeUpdate() {
+    if (timeInterval) clearInterval(timeInterval);
+    timeInterval = setInterval(() => {
+        if (startTime && presentationScreen.classList.contains('hidden')) {
+            clearInterval(timeInterval);
+            return;
+        }
+        const now = new Date();
+        const elapsed = Math.floor((now - startTime) / 1000);
+        const average = 300; // 5 minutes in seconds
+        const elapsedHours = Math.floor(elapsed / 3600);
+        const elapsedMinutes = Math.floor((elapsed % 3600) / 60);
+        const elapsedSeconds = elapsed % 60;
+        const avgHours = Math.floor(average / 3600);
+        const avgMinutes = Math.floor((average % 3600) / 60);
+        const avgSeconds = average % 60;
+        timeInfo.textContent = `Elapsed: ${elapsedHours.toString().padStart(2, '0')}:${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')} / 00:${avgMinutes.toString().padStart(2, '0')}:${avgSeconds.toString().padStart(2, '0')}`;
+    }, 1000);
 }
 
 // Keyboard navigation
@@ -197,6 +227,7 @@ document.addEventListener('keydown', (event) => {
 // Quiz generation
 function generateQuiz() {
     if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
+    if (timeInterval) clearInterval(timeInterval);
     quizAnswers = [];
     quizScore = 0;
     userQuizResponses = [];
