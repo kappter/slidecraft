@@ -1,6 +1,13 @@
-Step,Description,Order Number
-Organize Desk,"Arrange books and supplies neatly",1
-Adjust Chair,"Set to comfortable height",2
-Reduce Noise,"Use headphones if needed",3
-Prepare Materials,"Gather notes and pens",4
-Focus Session,"Start with a 25-minute timer",5
+Step,Description,Order Number,Image URL
+Prepare Desk,"Clear desk surface and organize materials",1,https://images.unsplash.com/photo-1528731708534-816fe59f5c99
+Adjust Lighting,"Set up a bright, adjustable desk lamp",2,https://images.unsplash.com/photo-1583224964978-4b9040a3653b
+Select Chair,"Choose a comfortable, ergonomic chair",3,https://images.unsplash.com/photo-1498837167922-ddd27525d352
+Minimize Noise,"Use noise-canceling headphones if needed",4,https://images.unsplash.com/photo-1611078489935-0cb4c2497a07
+Gather Tools,"Collect pens, notebooks, and a water bottle",5,https://images.unsplash.com/photo-1565711721653-d5b9233af955
+Set Timer,"Start a 25-minute focus session timer",6,https://images.unsplash.com/photo-1545018596-2e8400b57c92
+Organize Notes,"Arrange study materials in order of use",7,https://images.unsplash.com/photo-1600585154340-be6161a56a0c
+Check Supplies,"Ensure all tools are within reach",8,https://images.unsplash.com/photo-1626700051175-6818013e1d4f
+Eliminate Clutter,"Remove unrelated items from the desk",9,https://images.unsplash.com/photo-1598033129183-c4f48c6f0b6a
+Review Plan,"Look over your study schedule",10,https://images.unsplash.com/photo-1550828553-7dc2a66e4166
+Begin Study,"Start with the first topic or task",11,https://images.unsplash.com/photo-1603798129864-1e6b4c6064fe
+Clean Up,"Tidy desk after the session",12,https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b

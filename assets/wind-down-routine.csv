@@ -1,6 +1,13 @@
-Step,Description,Order Number
-Dim Lights,"Lower lights for relaxation",1
-Read Book,"Spend 15 minutes reading",2
-Stretch Body,"Do light stretching exercises",3
-Set Alarm,"Prepare for next day",4
-Sleep Prep,"Get into bed by 10 PM",5
+Step,Description,Order Number,Image URL
+Dim Lights,"Lower room lights for a calm atmosphere",1,https://images.unsplash.com/photo-1528731708534-816fe59f5c99
+Change Clothes,"Put on comfortable pajamas",2,https://images.unsplash.com/photo-1583224964978-4b9040a3653b
+Read Book,"Read a chapter of a relaxing book",3,https://images.unsplash.com/photo-1498837167922-ddd27525d352
+Stretch Body,"Perform a 5-minute stretching routine",4,https://images.unsplash.com/photo-1611078489935-0cb4c2497a07
+Set Alarm,"Program tomorrow’s wake-up time",5,https://images.unsplash.com/photo-1565711721653-d5b9233af955
+Prepare Bed,"Fluff pillows and straighten sheets",6,https://images.unsplash.com/photo-1545018596-2e8400b57c92
+Hydrate,"Drink a glass of water",7,https://images.unsplash.com/photo-1600585154340-be6161a56a0c
+Turn Off Devices,"Power down phone and computer",8,https://images.unsplash.com/photo-1626700051175-6818013e1d4f
+Meditate,"Spend 5 minutes in quiet meditation",9,https://images.unsplash.com/photo-1598033129183-c4f48c6f0b6a
+Plan Tomorrow,"Write a quick to-do list",10,https://images.unsplash.com/photo-1550828553-7dc2a66e4166
+Relax Mind,"Listen to soft music or nature sounds",11,https://images.unsplash.com/photo-1603798129864-1e6b4c6064fe
+Sleep Time,"Get into bed and rest",12,https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b
