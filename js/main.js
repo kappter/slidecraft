@@ -191,4 +191,99 @@ submitQuiz.addEventListener('click', () => {
     quizAnswers.forEach((answer, index) => {
         const selected = document.querySelector(`input[name="question-${index}"]:checked`);
         const userAnswer = selected ? selected.value : 'No answer';
-        const isCorrect = selected && selected.value === quizContent.querySelectorAll
+        const isCorrect = selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value;
+        if (isCorrect) quizScore++;
+        userQuizResponses.push({
+            question: `Question ${index + 1}: What is Step ${steps.find(s => s.Step === answer.correctAnswer)['Order Number']}?`,
+            userAnswer,
+            correctAnswer: answer.correctAnswer,
+            isCorrect
+        });
+    });
+    quizScreen.classList.add('hidden');
+    reportScreen.classList.remove('hidden');
+});
+
+// Photo upload
+photoUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file || file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Please upload a JPEG or PNG image under 5MB.');
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+        userPhoto = reader.result;
+        photoPreview.src = userPhoto;
+        photoPreview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+});
+
+// Report generation
+generateReport.addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const userName = userNameInput.value || 'Anonymous';
+    const endTime = new Date();
+    const timeTaken = Math.floor((endTime - startTime) / 1000);
+    const averageTime = 300;
+    const hours = Math.floor(timeTaken / 3600);
+    const minutes = Math.floor((timeTaken % 3600) / 60);
+    const seconds = timeTaken % 60;
+    
+    // Header
+    doc.setFillColor(30, 64, 175);
+    doc.rect(0, 0, 210, 20, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`SlideCraft Report: ${taskName}`, 10, 15);
+    
+    // User Info Section
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Name: ${userName}`, 10, 30);
+    doc.text(`Task: ${taskName}`, 10, 40);
+    doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
+    doc.text(`Average Time: 00:05:00`, 10, 60);
+    doc.setTextColor(34, 139, 34);
+    if (timeTaken > averageTime) doc.setTextColor(220, 20, 60);
+    doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
+    
+    // Quiz Results Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Quiz Score: ${quizScore}/5`, 10, 90);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    let yPos = 100;
+    userQuizResponses.forEach((response, index) => {
+        doc.text(response.question, 10, yPos);
+        doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
+        doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
+        doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60);
+        doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
+        doc.setTextColor(0, 0, 0);
+        yPos += 25;
+    });
+    
+    // Process Steps Section
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Process Steps:', 10, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    steps.forEach((step, index) => {
+        doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''}`, 10, yPos + 10 + index * 10);
+    });
+    
+    // Add User Photo
+    if (userPhoto) {
+        doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
+    }
+    
+    doc.save(`Process_Report_${taskName}.pdf`);
+});
