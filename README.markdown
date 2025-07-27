@@ -4,14 +4,14 @@ SlideCraft is a web-based application designed for high school students and educ
 
 ## Features
 - **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`, `Duration`).
-- **Predefined Processes**: Select from a list of built-in processes stored in `assets/` via a dropdown.
+- **Predefined Processes**: Select from a list of built-in processes stored in `assets/` via a dropdown, including Peanut Butter Sandwich, Wind Down Routine, and Study Environment.
 - **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons, keyboard navigation (arrow keys), and optional auto-advance based on duration.
 - **Theme Selection**: Choose from Light or Dark themes for optimal visibility on mobile devices or projectors.
 - **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the PDF report.
-- **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps.
+- **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps, with no auto-advance.
 - **Photo Upload**: Optionally upload a photo (JPEG/PNG, max 5MB) to include in the PDF report, showcasing the process results.
 - **PDF Report**: Download a PDF with quiz results, time taken, uploaded photo, and process summary, formatted for Canvas submission.
-- **Responsive Design**: Works seamlessly on desktops, phones, and projectors using Tailwind CSS.
+- **Responsive Design**: Works seamlessly on desktops, phones, and projectors using Tailwind CSS with a fixed, ultra-compact header and footer, featuring a super clean and professional look.
 - **Static Hosting**: Deployable on GitHub Pages with no server-side dependencies.
 
 ## Directory Structure
@@ -20,10 +20,13 @@ slidecraft/
 ├── index.html                # Main HTML file
 ├── main.js                   # Core JavaScript logic
 ├── styles.css                # Custom theme styles
+├── tailwind.css             # Compiled Tailwind CSS
 ├── assets/
 │   ├── sample.csv           # Sample CSV file
+│   ├── wind-down-routine.csv # Wind Down Routine process
+│   ├── study-environment.csv # Study Environment process
 │   ├── placeholder.jpg      # Fallback image for invalid URLs
-│   ├── favicon.ico          # Optional favicon
+│   ├── favicon.ico          # Favicon
 │   ├── processes.json       # List of available process CSVs
 ├── README.md                # This file
 └── .gitignore               # Git ignore file
@@ -52,7 +55,7 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 
 ## Usage
 1. Open the app in a browser (desktop, phone, or projector).
-2. Select a theme (Light or Dark) from the header dropdown for optimal visibility.
+2. Select a theme (Light or Dark) from the fixed header dropdown for optimal visibility.
 3. Choose a predefined process from the "Select Asset" dropdown or upload a custom CSV file containing process steps (see [CSV Format](#csv-format) below).
 4. Check 'Auto-Advance' to move slides automatically based on the Duration column (default 5 seconds).
 5. Click 'Start' to begin the guided process.
@@ -78,10 +81,10 @@ Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg,5
 ```
 
 ## Dependencies
-All dependencies are loaded via CDN:
-- **Tailwind CSS**: For responsive styling.
-- **Papa Parse**: For CSV parsing.
-- **jsPDF**: For PDF generation.
+All dependencies are loaded via CDN or included locally:
+- **Tailwind CSS**: Compiled locally in `tailwind.css` for styling.
+- **Papa Parse**: For CSV parsing (via CDN).
+- **jsPDF**: For PDF generation (via CDN).
 
 ## Contributing
 Contributions are welcome! Please:

@@ -15,9 +15,9 @@
     color: #dc2626; /* Tailwind red-600 */
     font-weight: bold;
     border: 2px solid #dc2626;
-    padding: 8px;
+    padding: 4px;
     border-radius: 4px;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 /* Disabled Button */
@@ -33,7 +33,6 @@ button:disabled {
 .light-theme input, .light-theme select, .light-theme button {
     background-color: #ffffff;
     color: #1f2937;
-    border-color: #d1d5db; /* Tailwind gray-300 */
 }
 
 .dark-theme header, .dark-theme footer {
@@ -42,7 +41,6 @@ button:disabled {
 .dark-theme input, .dark-theme select, .dark-theme button {
     background-color: #4b5563; /* Tailwind gray-600 */
     color: #f9fafb;
-    border-color: #6b7280; /* Tailwind gray-500 */
 }
 
 /* Fixed Header and Footer */

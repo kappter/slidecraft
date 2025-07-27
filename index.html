@@ -51,17 +51,17 @@
     <script src="main.js" defer></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col">
-    <header class="fixed top-0 left-0 w-full bg-opacity-90 p-2 z-10">
-        <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold">SlideCraft</h1>
-            <select id="theme-select" class="p-2 border rounded-lg">
+    <header class="fixed top-0 left-0 w-full bg-opacity-90 p-1 z-10">
+        <div class="flex items-center justify-center">
+            <h1 class="text-sm font-bold">SlideCraft</h1>
+            <select id="theme-select" class="ml-2 p-1 border-none rounded-lg bg-opacity-75">
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
         </div>
     </header>
 
-    <main class="flex-grow pt-12 pb-12 px-4">
+    <main class="flex-grow pt-8 pb-8 px-4">
         <section id="upload-screen" class="max-w-2xl mx-auto">
             <h2 class="text-lg font-semibold mb-6">Welcome to SlideCraft</h2>
             <p class="text-base font-medium mb-6">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
@@ -81,15 +81,15 @@
             </div>
             <div class="mb-6">
                 <label for="csv-upload" class="block text-base font-medium mb-3">Upload CSV</label>
-                <input type="file" id="csv-upload" accept=".csv" class="p-2 border rounded-lg w-full">
+                <input type="file" id="csv-upload" accept=".csv" class="p-2 border-none rounded-lg w-full bg-opacity-75">
             </div>
             <div class="mb-6">
                 <label for="assets-select" class="block text-base font-medium mb-3">Select Asset</label>
-                <select id="assets-select" class="p-2 border rounded-lg w-full">
+                <select id="assets-select" class="p-2 border-none rounded-lg w-full bg-opacity-75">
                     <option value="">Select an asset</option>
                 </select>
             </div>
-            <button id="start-button" class="p-2 bg-blue-500 text-white rounded-lg shadow-md disabled:bg-gray-300" disabled>Start</button>
+            <button id="start-button" class="p-2 bg-blue-500 text-white rounded-lg w-full disabled:bg-gray-300" disabled>Start</button>
             <p id="error-message" class="hidden error-message">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
         </section>
 
@@ -98,34 +98,34 @@
             <p id="step-description" class="mb-4 text-center max-w-md"></p>
             <img id="step-image" class="mb-4 max-w-full h-auto" src="assets/placeholder.jpg" alt="Step Image">
             <div class="flex space-x-4">
-                <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hidden">Previous</button>
-                <button id="next-button" class="p-2 bg-blue-500 text-white rounded-lg shadow-md">Next</button>
+                <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg hidden">Previous</button>
+                <button id="next-button" class="p-2 bg-blue-500 text-white rounded-lg">Next</button>
             </div>
         </section>
 
         <section id="quiz-screen" class="hidden">
             <h2 class="text-xl font-semibold mb-4">Quiz</h2>
             <div id="quiz-content"></div>
-            <button id="submit-quiz" class="p-2 bg-blue-500 text-white rounded-lg shadow-md hidden">Submit Quiz</button>
+            <button id="submit-quiz" class="p-2 bg-blue-500 text-white rounded-lg hidden">Submit Quiz</button>
         </section>
 
         <section id="report-screen" class="hidden">
             <h2 class="text-xl font-semibold mb-4">Generate Report</h2>
             <div class="mb-6">
                 <label for="user-name" class="block text-base font-medium mb-3">Your Name</label>
-                <input type="text" id="user-name" class="p-2 border rounded-lg w-full max-w-xs">
+                <input type="text" id="user-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-opacity-75">
             </div>
             <div class="mb-6">
                 <label for="photo-upload" class="block text-base font-medium mb-3">Upload Photo</label>
-                <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="p-2 border rounded-lg">
+                <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="p-2 border-none rounded-lg">
                 <img id="photo-preview" class="hidden mt-2 max-w-xs" src="" alt="Photo Preview">
             </div>
-            <button id="generate-report" class="p-2 bg-blue-500 text-white rounded-lg shadow-md">Generate PDF Report</button>
+            <button id="generate-report" class="p-2 bg-blue-500 text-white rounded-lg w-full">Generate PDF Report</button>
         </section>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full bg-opacity-90 p-2 text-center z-10">
-        <p class="text-sm">Version: 002-001-001-007</p>
+    <footer class="fixed bottom-0 left-0 w-full bg-opacity-90 p-1 text-center z-10">
+        <p class="text-xs">Version: 002-001-001-009</p>
     </footer>
 </body>
 </html>
