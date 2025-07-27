@@ -1,16 +1,16 @@
 # SlideCraft
 
-SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, select from predefined processes, view them in a full-screen, clickable interface (optimized for phones and projectors), choose between Light and Dark themes, and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a PDF report suitable for submission to Canvas or other learning management systems.
+SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, select from predefined processes, view them in a full-screen, clickable interface (optimized for phones and projectors), choose between Light and Dark themes, and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a report that can be viewed in the browser and printed or saved as a PDF.
 
 ## Features
 - **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`, `Duration`).
 - **Predefined Processes**: Select from a list of built-in processes stored in `assets/` via a dropdown, including Peanut Butter Sandwich, Wind Down Routine, and Study Environment.
-- **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons, keyboard navigation (arrow keys), and optional auto-advance based on duration.
+- **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons, keyboard navigation (arrow keys), and optional auto-advance based on duration. Shows elapsed time vs. average time in the footer and step number out of total.
 - **Theme Selection**: Choose from Light or Dark themes for optimal visibility on mobile devices or projectors.
-- **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the PDF report.
+- **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the report.
 - **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps, with no auto-advance.
-- **Photo Upload**: Optionally upload a photo (JPEG/PNG, max 5MB) to include in the PDF report, showcasing the process results.
-- **PDF Report**: Download a PDF with quiz results, time taken, uploaded photo, and process summary, formatted for Canvas submission.
+- **Photo Upload**: Optionally upload a photo (JPEG/PNG, max 5MB) to include in the report, showcasing the process results.
+- **Report Preview**: Displays a scrollable report in the browser with user info, quiz results, process steps, and uploaded photo, which can be printed or saved as PDF using the browser’s native functionality.
 - **Responsive Design**: Works seamlessly on desktops, phones, and projectors using Tailwind CSS with a fixed, ultra-compact header and footer, featuring a super clean and professional look.
 - **Static Hosting**: Deployable on GitHub Pages with no server-side dependencies.
 
@@ -61,8 +61,8 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 5. Click 'Start' to begin the guided process.
 6. Complete the 5-question multiple-choice quiz.
 7. Enter your name (optional) and upload a photo (JPEG/PNG, max 5MB) of your process results.
-8. Download the PDF report, which includes your quiz score, time taken, photo, and process summary.
-9. Submit the PDF to Canvas or your learning management system.
+8. View the report preview, then click "Print Report" to print or save it as a PDF using your browser.
+9. Submit the printed or saved PDF to Canvas or your learning management system.
 
 ## CSV Format
 The CSV file must have the following columns:
@@ -84,7 +84,6 @@ Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg,5
 All dependencies are loaded via CDN or included locally:
 - **Tailwind CSS**: Compiled locally in `tailwind.css` for styling.
 - **Papa Parse**: For CSV parsing (via CDN).
-- **jsPDF**: For PDF generation (via CDN).
 
 ## Contributing
 Contributions are welcome! Please:
