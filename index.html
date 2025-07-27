@@ -1,74 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SlideCraft</title>
-    <link rel="icon" href="assets/favicon.ico">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="styles.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
-    <!-- Upload Screen -->
-    <div id="upload-screen" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-4 text-center">SlideCraft</h1>
-        <div class="mb-4">
-            <label for="theme-select" class="block text-sm font-medium text-gray-700">Select Theme</label>
-            <select id="theme-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="bg-gray-100">Light</option>
-                <option value="bg-gray-800 text-white">Dark</option>
-            </select>
-        </div>
-        <div class="mb-4">
-            <label for="csv-upload" class="block text-sm font-medium text-gray-700">Upload CSV</label>
-            <input type="file" id="csv-upload" accept=".csv" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-        </div>
-        <div class="mb-4">
-            <label for="assets-select" class="block text-sm font-medium text-gray-700">Select Asset</label>
-            <select id="assets-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="">Select an asset</option>
-                <!-- Populated dynamically by main.js -->
-            </select>
-        </div>
-        <button id="start-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full">Start</button>
-        <p id="error-message" class="text-red-500 mt-2 hidden">Invalid CSV file. Please ensure it contains Step, Description, Order Number, and Image URL columns.</p>
-    </div>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>SlideCraft</title>
+      <link rel="icon" href="assets/favicon.ico">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+      <link href="styles.css" rel="stylesheet">
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <!-- Upload Screen -->
+      <div id="upload-screen" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <h1 class="text-2xl font-bold mb-4 text-center">SlideCraft</h1>
+          <div class="mb-4">
+              <label for="theme-select" class="block text-sm font-medium text-gray-700">Select Theme</label>
+              <select id="theme-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                  <option value="bg-gray-100">Light</option>
+                  <option value="bg-gray-800 text-white">Dark</option>
+              </select>
+          </div>
+          <div class="mb-4">
+              <label for="csv-upload" class="block text-sm font-medium text-gray-700">Upload CSV</label>
+              <input type="file" id="csv-upload" accept=".csv" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+          </div>
+          <div class="mb-4">
+              <label for="assets-select" class="block text-sm font-medium text-gray-700">Select Asset</label>
+              <select id="assets-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                  <option value="">Select an asset</option>
+                  <!-- Populated dynamically by main.js -->
+              </select>
+          </div>
+          <button id="start-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full">Start</button>
+          <p id="error-message" class="text-red-500 mt-2 hidden">Invalid CSV file. Please ensure it contains Step, Description, Order Number, and Image URL columns.</p>
+      </div>
 
-    <!-- Presentation Screen -->
-    <div id="presentation-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
-        <h2 id="step-title" class="text-xl font-bold mb-4"></h2>
-        <p id="step-description" class="mb-4"></p>
-        <img id="step-image" class="w-full h-64 object-contain mb-4" src="assets/placeholder.jpg" alt="Step Image">
-        <div class="flex justify-between">
-            <button id="prev-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 hidden">Previous</button>
-            <button id="next-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Next</button>
-        </div>
-    </div>
+      <!-- Presentation Screen -->
+      <div id="presentation-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
+          <h2 id="step-title" class="text-xl font-bold mb-4"></h2>
+          <p id="step-description" class="mb-4"></p>
+          <img id="step-image" class="w-full h-64 object-contain mb-4" src="assets/placeholder.jpg" alt="Step Image">
+          <div class="flex justify-between">
+              <button id="prev-button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 hidden">Previous</button>
+              <button id="next-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Next</button>
+          </div>
+      </div>
 
-    <!-- Quiz Screen -->
-    <div id="quiz-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 class="text-xl font-bold mb-4">Quiz</h2>
-        <div id="quiz-content"></div>
-        <button id="submit-quiz" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full hidden">Submit Quiz</button>
-    </div>
+      <!-- Quiz Screen -->
+      <div id="quiz-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <h2 class="text-xl font-bold mb-4">Quiz</h2>
+          <div id="quiz-content"></div>
+          <button id="submit-quiz" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full hidden">Submit Quiz</button>
+      </div>
 
-    <!-- Report Screen -->
-    <div id="report-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 class="text-xl font-bold mb-4">Generate Report</h2>
-        <div class="mb-4">
-            <label for="user-name" class="block text-sm font-medium text-gray-700">Your Name</label>
-            <input type="text" id="user-name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Enter your name">
-        </div>
-        <div class="mb-4">
-            <label for="photo-upload" class="block text-sm font-medium text-gray-700">Upload Photo</label>
-            <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-            <img id="photo-preview" class="w-24 h-24 object-cover mt-2 hidden" src="" alt="User Photo">
-        </div>
-        <button id="generate-report" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full">Generate PDF Report</button>
-    </div>
+      <!-- Report Screen -->
+      <div id="report-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <h2 class="text-xl font-bold mb-4">Generate Report</h2>
+          <div class="mb-4">
+              <label for="user-name" class="block text-sm font-medium text-gray-700">Your Name</label>
+              <input type="text" id="user-name" class="mt-1 block w-full p-2 border border-gray-300 rounded-md" placeholder="Enter your name">
+          </div>
+          <div class="mb-4">
+              <label for="photo-upload" class="block text-sm font-medium text-gray-700">Upload Photo</label>
+              <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+              <img id="photo-preview" class="w-24 h-24 object-cover mt-2 hidden" src="" alt="User Photo">
+          </div>
+          <button id="generate-report" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full">Generate PDF Report</button>
+      </div>
 
-    <script src="main.js"></script>
-</body>
-</html>
+      <script src="main.js"></script>
+  </body>
+  </html>
