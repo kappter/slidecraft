@@ -12,15 +12,17 @@
     <script src="main.js" defer></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col">
-    <header class="p-4">
-        <h1 class="text-2xl font-bold">SlideCraft</h1>
-        <select id="theme-select" class="p-2 border rounded">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-        </select>
+    <header class="fixed top-0 left-0 w-full bg-opacity-90 p-4 z-10">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold">SlideCraft</h1>
+            <select id="theme-select" class="p-2 border rounded">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
     </header>
 
-    <main class="flex-grow p-4">
+    <main class="flex-grow pt-16 pb-16 px-4">
         <section id="upload-screen">
             <h2 class="text-xl font-semibold mb-4">Welcome to SlideCraft</h2>
             <p class="mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
@@ -83,8 +85,8 @@
         </section>
     </main>
 
-    <footer class="p-4 text-center">
-        <p>Version: 002-001-001-003</p>
+    <footer class="fixed bottom-0 left-0 w-full bg-opacity-90 p-4 text-center z-10">
+        <p>Version: 002-001-001-005</p>
     </footer>
 </body>
 </html>
