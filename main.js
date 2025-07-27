@@ -37,8 +37,14 @@ themeSelect.addEventListener('change', () => {
 
 // Populate assets dropdown from processes.json
 fetch('assets/processes.json')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch processes.json');
+        }
+        return response.json();
+    })
     .then(processes => {
+        assetsSelect.innerHTML = '<option value="">Select an asset</option>';
         processes.forEach(proc => {
             const option = document.createElement('option');
             option.value = `assets/${proc.file}`;
@@ -48,7 +54,7 @@ fetch('assets/processes.json')
     })
     .catch(err => {
         console.error('Error loading processes:', err);
-        errorMessage.textContent = 'Failed to load process list.';
+        errorMessage.textContent = 'Failed to load process list. Check console for details.';
         errorMessage.classList.remove('hidden');
     });
 
@@ -157,7 +163,7 @@ function showStep(index) {
 prevButton.addEventListener('click', () => showStep(currentStep - 1));
 nextButton.addEventListener('click', () => {
     if (currentStep === steps.length - 1) {
-        if (autoAdvanceInterval) clearInterval(autoAdvanceInterval); // Clear interval before quiz
+        if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
         presentationScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         generateQuiz();
@@ -173,7 +179,7 @@ function startAutoAdvance() {
         if (currentStep < steps.length - 1) {
             showStep(currentStep + 1);
         } else {
-            clearInterval(autoAdvanceInterval); // Clear when reaching the end
+            clearInterval(autoAdvanceInterval);
             presentationScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
             generateQuiz();
@@ -190,7 +196,7 @@ document.addEventListener('keydown', (event) => {
 
 // Quiz generation
 function generateQuiz() {
-    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval); // Ensure no auto-advance on quiz
+    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
     quizAnswers = [];
     quizScore = 0;
     userQuizResponses = [];
