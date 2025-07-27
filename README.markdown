@@ -3,8 +3,8 @@
 SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, view them in a full-screen, clickable interface (optimized for phones and projectors), select from multiple themes (Light, Dark), and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a PDF report suitable for submission to Canvas or other learning management systems.
 
 ## Features
-- **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`).
-- **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons and keyboard navigation (arrow keys).
+- **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`, `Duration`).
+- **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons, keyboard navigation (arrow keys), and optional auto-advance based on duration.
 - **Theme Selection**: Choose from Light or Dark themes for optimal visibility on mobile devices or projectors.
 - **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the PDF report.
 - **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps.
@@ -50,13 +50,14 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 
 ## Usage
 1. Open the app in a browser (desktop, phone, or projector).
-2. Select a theme (Light or Dark) from the dropdown for optimal visibility.
+2. Select a theme (Light or Dark) from the header dropdown for optimal visibility.
 3. Upload a CSV file containing process steps (see [CSV Format](#csv-format) below).
-4. Click or tap to advance through the steps, or use “Previous”/“Next” buttons or arrow keys.
-5. Complete the 5-question multiple-choice quiz.
-6. Enter your name (optional) and upload a photo (JPEG/PNG, max 5MB) of your process results.
-7. Download the PDF report, which includes your quiz score, time taken, photo, and process summary.
-8. Submit the PDF to Canvas or your learning management system.
+4. Check 'Auto-Advance' to move slides automatically based on the Duration column (default 5 seconds).
+5. Click 'Start' to begin the guided process.
+6. Complete the 5-question multiple-choice quiz.
+7. Enter your name (optional) and upload a photo (JPEG/PNG, max 5MB) of your process results.
+8. Download the PDF report, which includes your quiz score, time taken, photo, and process summary.
+9. Submit the PDF to Canvas or your learning management system.
 
 ## CSV Format
 The CSV file must have the following columns:
@@ -64,13 +65,14 @@ The CSV file must have the following columns:
 - **Description**: Detailed explanation of the step (e.g., “Combine flour, sugar, and eggs”).
 - **Order Number**: Numeric sequence of the step (e.g., 1, 2, 3).
 - **Image URL**: Publicly accessible URL to an image for the step (e.g., `https://example.com/image.jpg`).
+- **Duration**: Time in seconds for each step (e.g., 5, 10). Defaults to 5 if not specified.
 
 Example (`sample.csv`):
 ```csv
-Step,Description,Order Number,Image URL
-Mix Ingredients,"Combine flour, sugar, and eggs in a bowl",1,https://example.com/mix.jpg
-Bake,"Place in oven at 350°F for 30 minutes",2,https://example.com/bake.jpg
-Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg
+Step,Description,Order Number,Image URL,Duration
+Mix Ingredients,"Combine flour, sugar, and eggs in a bowl",1,https://example.com/mix.jpg,5
+Bake,"Place in oven at 350°F for 30 minutes",2,https://example.com/bake.jpg,10
+Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg,5
 ```
 
 ## Dependencies
