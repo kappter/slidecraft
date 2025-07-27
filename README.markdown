@@ -1,11 +1,11 @@
 # SlideCraft
 
-SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, view them in a full-screen, clickable interface (optimized for phones and projectors), select from multiple themes (Light, Dark, Blue, Green), and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a PDF report suitable for submission to Canvas or other learning management systems.
+SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, view them in a full-screen, clickable interface (optimized for phones and projectors), select from multiple themes (Light, Dark), and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a PDF report suitable for submission to Canvas or other learning management systems.
 
 ## Features
 - **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`).
 - **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons and keyboard navigation (arrow keys).
-- **Theme Selection**: Choose from Light, Dark, Blue, or Green themes for optimal visibility on mobile devices or projectors.
+- **Theme Selection**: Choose from Light or Dark themes for optimal visibility on mobile devices or projectors.
 - **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the PDF report.
 - **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps.
 - **Photo Upload**: Optionally upload a photo (JPEG/PNG, max 5MB) to include in the PDF report, showcasing the process results.
@@ -17,12 +17,8 @@ SlideCraft is a web-based application designed for high school students and educ
 ```
 slidecraft/
 ├── index.html                # Main HTML file
-├── css/
-│   └── styles.css           # Custom theme styles
-├── js/
-│   ├── main.js              # Core JavaScript logic
-│   ├── papaparse.min.js     # Papa Parse for CSV parsing
-│   └── jspdf.umd.min.js     # jsPDF for PDF generation
+├── main.js                   # Core JavaScript logic
+├── styles.css                # Custom theme styles
 ├── assets/
 │   ├── sample.csv           # Sample CSV file
 │   ├── placeholder.jpg      # Fallback image for invalid URLs
@@ -54,7 +50,7 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 
 ## Usage
 1. Open the app in a browser (desktop, phone, or projector).
-2. Select a theme (Light, Dark, Blue, or Green) from the dropdown for optimal visibility.
+2. Select a theme (Light or Dark) from the dropdown for optimal visibility.
 3. Upload a CSV file containing process steps (see [CSV Format](#csv-format) below).
 4. Click or tap to advance through the steps, or use “Previous”/“Next” buttons or arrow keys.
 5. Complete the 5-question multiple-choice quiz.
