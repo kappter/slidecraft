@@ -3,24 +3,24 @@ let steps = [];
 let currentStep = 0;
 let startTime = null;
 
-console.log('Script loaded and initialized');
+console.log('Script loaded at', new Date().toLocaleTimeString());
 
-// DOM elements
-const uploadScreen = document.getElementById('upload-screen');
-const presentationScreen = document.getElementById('presentation-screen');
-const reportScreen = document.getElementById('report-screen');
-const csvUpload = document.getElementById('csv-upload');
-const startButton = document.getElementById('start-button');
-const themeSelect = document.getElementById('theme-select');
-const errorMessage = document.getElementById('error-message');
-const stepTitle = document.getElementById('step-title');
-const stepDescription = document.getElementById('step-description');
-const prevButton = document.getElementById('prev-button');
-const nextButton = document.getElementById('next-button');
-const userNameInput = document.getElementById('user-name');
-const generateReport = document.getElementById('generate-report');
+// DOM elements with fallback check
+const uploadScreen = document.getElementById('upload-screen') || console.error('upload-screen not found');
+const presentationScreen = document.getElementById('presentation-screen') || console.error('presentation-screen not found');
+const reportScreen = document.getElementById('report-screen') || console.error('report-screen not found');
+const csvUpload = document.getElementById('csv-upload') || console.error('csv-upload not found');
+const startButton = document.getElementById('start-button') || console.error('start-button not found');
+const themeSelect = document.getElementById('theme-select') || console.error('theme-select not found');
+const errorMessage = document.getElementById('error-message') || console.error('error-message not found');
+const stepTitle = document.getElementById('step-title') || console.error('step-title not found');
+const stepDescription = document.getElementById('step-description') || console.error('step-description not found');
+const prevButton = document.getElementById('prev-button') || console.error('prev-button not found');
+const nextButton = document.getElementById('next-button') || console.error('next-button not found');
+const userNameInput = document.getElementById('user-name') || console.error('user-name not found');
+const generateReport = document.getElementById('generate-report') || console.error('generate-report not found');
 
-console.log('DOM elements:', { csvUpload, startButton, themeSelect, errorMessage });
+console.log('DOM elements checked:', { csvUpload, startButton });
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
@@ -30,7 +30,7 @@ themeSelect.addEventListener('change', () => {
 
 // CSV upload
 csvUpload.addEventListener('change', (event) => {
-    console.log('CSV file selected, file:', event.target.files[0]);
+    console.log('CSV file selected, event:', event, 'file:', event.target.files[0]);
     const file = event.target.files[0];
     if (!file) {
         console.log('No file selected');
@@ -42,7 +42,7 @@ csvUpload.addEventListener('change', (event) => {
     Papa.parse(file, {
         header: true,
         complete: (result) => {
-            console.log('CSV parsing complete', result);
+            console.log('CSV parsing complete, result:', result);
             const requiredFields = ['Step', 'Description', 'Order Number'];
             if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
                 errorMessage.textContent = 'Invalid CSV: Needs Step, Description, Order Number.';
@@ -50,6 +50,7 @@ csvUpload.addEventListener('change', (event) => {
                 return;
             }
             steps = result.data.sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+            console.log('Sorted steps:', steps);
             if (steps.length === 0) {
                 errorMessage.textContent = 'No steps found.';
                 console.log('No steps in CSV');
@@ -57,10 +58,10 @@ csvUpload.addEventListener('change', (event) => {
             }
             errorMessage.classList.add('hidden');
             startButton.disabled = false;
-            console.log('CSV validated, steps:', steps);
+            console.log('Start button enabled, steps count:', steps.length);
         },
         error: (error) => {
-            errorMessage.textContent = `Error parsing CSV: ${error.message}. Check for extra commas or inconsistent rows.`;
+            errorMessage.textContent = `Error parsing CSV: ${error.message}`;
             errorMessage.classList.remove('hidden');
             console.log('CSV parsing error:', error);
         }
@@ -69,8 +70,11 @@ csvUpload.addEventListener('change', (event) => {
 
 // Start button
 startButton.addEventListener('click', () => {
-    console.log('Start button clicked, steps:', steps);
-    if (!steps.length) return;
+    console.log('Start button clicked, steps length:', steps.length);
+    if (!steps.length) {
+        console.log('No steps to start');
+        return;
+    }
     startTime = new Date();
     showStep(0);
     uploadScreen.classList.add('hidden');
@@ -115,7 +119,7 @@ generateReport.addEventListener('click', () => {
     doc.text(`SlideCraft Report - ${userName}`, 10, 10);
     doc.text(`Time Taken: ${Math.floor(timeTaken / 60)}m ${timeTaken % 60}s`, 10, 20);
     doc.text('Steps:', 10, 30);
-    steps.forElementEach((step, index) => {
+    steps.forEach((step, index) => {
         doc.text(`${index + 1}. ${step.Step}: ${step.Description}`, 10, 40 + index * 10);
     });
 
