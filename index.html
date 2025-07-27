@@ -10,31 +10,50 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="light-theme min-h-screen flex flex-col items-center justify-center">
-    <!-- Upload Screen -->
-    <div id="upload-screen" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-4 text-center">SlideCraft</h1>
-        <div class="mb-4">
-            <label for="theme-select" class="block text-sm font-medium text-gray-700">Select Theme</label>
-            <select id="theme-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="light-theme">Light</option>
-                <option value="dark-theme">Dark</option>
-            </select>
+<body class="light-theme min-h-screen flex flex-col">
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 w-full bg-gray-200 p-2 flex justify-between items-center z-10">
+        <span class="text-lg font-bold">SlideCraft</span>
+        <select id="theme-select" class="p-1 border border-gray-300 rounded-md">
+            <option value="light-theme">Light</option>
+            <option value="dark-theme">Dark</option>
+        </select>
+    </header>
+
+    <!-- Main Content (Centered Vertically and Horizontally) -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="text-center max-w-md">
+            <h2 class="text-2xl font-bold mb-4">Welcome to SlideCraft</h2>
+            <p class="mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
+            <ol class="list-decimal list-inside mb-4 text-left">
+                <li>Select a theme (Light or Dark) for best visibility.</li>
+                <li>Upload a CSV file with steps (Step, Description, Order Number, Image URL, Duration).</li>
+                <li>Check 'Auto-Advance' to move slides automatically based on duration (default 5 seconds).</li>
+                <li>Click 'Start' to begin the guided process.</li>
+                <li>Complete the quiz and generate a PDF report.</li>
+            </ol>
+            <p class="mb-4">Our vision: Empower learning with simple, mobile-friendly tools for process mastery.</p>
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" id="auto-advance" class="mr-2">
+                    <span>Auto-Advance Slides</span>
+                </label>
+            </div>
+            <div class="mb-4">
+                <label for="csv-upload" class="block text-sm font-medium text-gray-700">Upload CSV</label>
+                <input type="file" id="csv-upload" accept=".csv" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            <div class="mb-4">
+                <label for="assets-select" class="block text-sm font-medium text-gray-700">Select Asset</label>
+                <select id="assets-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <option value="">Select an asset</option>
+                    <!-- Populated dynamically by main.js -->
+                </select>
+            </div>
+            <button id="start-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full">Start</button>
+            <p id="error-message" class="error-message hidden">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
         </div>
-        <div class="mb-4">
-            <label for="csv-upload" class="block text-sm font-medium text-gray-700">Upload CSV</label>
-            <input type="file" id="csv-upload" accept=".csv" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-        </div>
-        <div class="mb-4">
-            <label for="assets-select" class="block text-sm font-medium text-gray-700">Select Asset</label>
-            <select id="assets-select" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                <option value="">Select an asset</option>
-                <!-- Populated dynamically by main.js -->
-            </select>
-        </div>
-        <button id="start-button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full">Start</button>
-        <p id="error-message" class="error-message hidden">Invalid CSV file. Please ensure it contains Step, Description, Order Number, and Image URL columns.</p>
-    </div>
+    </main>
 
     <!-- Presentation Screen -->
     <div id="presentation-screen" class="hidden bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
@@ -71,7 +90,7 @@
 
     <!-- Fixed Footer with Version -->
     <footer class="fixed bottom-0 left-0 w-full bg-gray-200 text-center text-sm p-1">
-        Version: 001-001-001-001
+        Version: 002-001-001-002
     </footer>
 
     <script src="main.js"></script>
