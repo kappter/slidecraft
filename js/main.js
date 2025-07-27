@@ -6,7 +6,7 @@ let quizAnswers = [];
 let quizScore = 0;
 let taskName = '';
 let userPhoto = null;
-let userQuizResponses = []; // Store user answers for report
+let userQuizResponses = [];
 
 // DOM elements
 const uploadScreen = document.getElementById('upload-screen');
@@ -14,7 +14,9 @@ const presentationScreen = document.getElementById('presentation-screen');
 const quizScreen = document.getElementById('quiz-screen');
 const reportScreen = document.getElementById('report-screen');
 const csvUpload = document.getElementById('csv-upload');
+const startButton = document.getElementById('start-button');
 const themeSelect = document.getElementById('theme-select');
+const assetsSelect = document.getElementById('assets-select');
 const errorMessage = document.getElementById('error-message');
 const stepTitle = document.getElementById('step-title');
 const stepDescription = document.getElementById('step-description');
@@ -33,16 +35,46 @@ themeSelect.addEventListener('change', () => {
     document.body.className = themeSelect.value + ' min-h-screen flex flex-col items-center justify-center';
 });
 
-// CSV upload
-csvUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+// Populate assets dropdown (static list; replace with dynamic fetch if available)
+const assetsList = ['placeholder.jpg', 'favicon.ico']; // Add more assets as needed
+assetsList.forEach(asset => {
+    const option = document.createElement('option');
+    option.value = `assets/${asset}`;
+    option.textContent = asset;
+    assetsSelect.appendChild(option);
+});
+
+// Optional: Dynamic fetch for assets (requires server endpoint)
+// Uncomment and configure if you have a server listing assets
+/*
+fetch('/assets-list') // Replace with your endpoint
+    .then(response => response.json())
+    .then(files => {
+        files.forEach(file => {
+            const option = document.createElement('option');
+            option.value = `assets/${file}`;
+            option.textContent = file;
+            assetsSelect.appendChild(option);
+        });
+    })
+    .catch(err => console.error('Error fetching assets:', err));
+*/
+
+// Start button handler
+startButton.addEventListener('click', () => {
+    if (!csvUpload.files.length) {
+        errorMessage.textContent = 'Please select a CSV file.';
+        errorMessage.classList.remove('hidden');
+        return;
+    }
+    const file = csvUpload.files[0];
     taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
     Papa.parse(file, {
         header: true,
         complete: (result) => {
             const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL'];
             if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+                errorMessage.textContent = 'Invalid CSV file. Please ensure it contains Step, Description, Order Number, and Image URL columns.';
                 errorMessage.classList.remove('hidden');
                 return;
             }
@@ -57,8 +89,18 @@ csvUpload.addEventListener('change', (event) => {
             showStep(0);
             uploadScreen.classList.add('hidden');
             presentationScreen.classList.remove('hidden');
+        },
+        error: (err) => {
+            errorMessage.textContent = 'Error parsing CSV file.';
+            errorMessage.classList.remove('hidden');
+            console.error('CSV parse error:', err);
         }
     });
+});
+
+// CSV upload (optional, for direct file selection)
+csvUpload.addEventListener('change', () => {
+    startButton.disabled = !csvUpload.files.length; // Enable Start button when file is selected
 });
 
 // Presentation navigation
@@ -95,7 +137,7 @@ document.addEventListener('keydown', (event) => {
 function generateQuiz() {
     quizAnswers = [];
     quizScore = 0;
-    userQuizResponses = []; // Reset user responses
+    userQuizResponses = [];
     quizContent.innerHTML = '';
     const questionCount = 5;
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
@@ -139,7 +181,7 @@ submitQuiz.addEventListener('click', () => {
     userQuizResponses = [];
     quizAnswers.forEach((answer, index) => {
         const selected = document.querySelector(`input[name="question-${index}"]:checked`);
-        const userAnswer = selected ? selected.value : 'No answer'; // Fixed comma to semicolon
+        const userAnswer = selected ? selected.value : 'No answer';
         const isCorrect = selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value;
         if (isCorrect) quizScore++;
         userQuizResponses.push({
@@ -176,29 +218,29 @@ generateReport.addEventListener('click', () => {
     const userName = userNameInput.value || 'Anonymous';
     const endTime = new Date();
     const timeTaken = Math.floor((endTime - startTime) / 1000);
-    const averageTime = 300; // Assumed average time in seconds (5 minutes)
+    const averageTime = 300;
     const hours = Math.floor(timeTaken / 3600);
     const minutes = Math.floor((timeTaken % 3600) / 60);
     const seconds = timeTaken % 60;
     
     // Header
-    doc.setFillColor(30, 64, 175); // Blue background
+    doc.setFillColor(30, 64, 175);
     doc.rect(0, 0, 210, 20, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.setTextColor(255, 255, 255); // White text
+    doc.setTextColor(255, 255, 255);
     doc.text(`SlideCraft Report: ${taskName}`, 10, 15);
     
     // User Info Section
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0); // Black text
+    doc.setTextColor(0, 0, 0);
     doc.text(`Name: ${userName}`, 10, 30);
     doc.text(`Task: ${taskName}`, 10, 40);
     doc.text(`Time Taken: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`, 10, 50);
     doc.text(`Average Time: 00:05:00`, 10, 60);
-    doc.setTextColor(34, 139, 34); // Green if faster
-    if (timeTaken > averageTime) doc.setTextColor(220, 20, 60); // Red if slower
+    doc.setTextColor(34, 139, 34);
+    if (timeTaken > averageTime) doc.setTextColor(220, 20, 60);
     doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
     
     // Quiz Results Section
@@ -213,7 +255,7 @@ generateReport.addEventListener('click', () => {
         doc.text(response.question, 10, yPos);
         doc.text(`Your Answer: ${response.userAnswer}`, 10, yPos + 5);
         doc.text(`Correct Answer: ${response.correctAnswer}`, 10, yPos + 10);
-        doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60); // Green for correct, red for incorrect
+        doc.setTextColor(response.isCorrect ? 34, 139, 34 : 220, 20, 60);
         doc.text(`Status: ${response.isCorrect ? 'Correct' : 'Incorrect'}`, 10, yPos + 15);
         doc.setTextColor(0, 0, 0);
         yPos += 25;
