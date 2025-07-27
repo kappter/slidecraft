@@ -1,4 +1,3 @@
-// Initialize state
 let steps = [];
 let currentStep = 0;
 let startTime = null;
@@ -9,7 +8,6 @@ let userPhoto = null;
 let userQuizResponses = [];
 let autoAdvanceInterval = null;
 
-// DOM elements
 const uploadScreen = document.getElementById('upload-screen');
 const presentationScreen = document.getElementById('presentation-screen');
 const quizScreen = document.getElementById('quiz-screen');
@@ -34,63 +32,113 @@ const autoAdvanceCheckbox = document.getElementById('auto-advance');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
-    document.body.className = themeSelect.value + ' min-h-screen flex flex-col';
+    document.body.className = themeSelect.value + '-theme min-h-screen flex flex-col';
 });
 
-// Populate assets dropdown
-const assetsList = ['placeholder.jpg', 'favicon.ico']; // Update with your assets
-assetsList.forEach(asset => {
-    const option = document.createElement('option');
-    option.value = `assets/${asset}`;
-    option.textContent = asset;
-    assetsSelect.appendChild(option);
-});
-
-// Start button handler
-startButton.addEventListener('click', () => {
-    if (!csvUpload.files.length) {
-        errorMessage.textContent = 'Please select a CSV file.';
+// Populate assets dropdown from processes.json
+fetch('assets/processes.json')
+    .then(response => response.json())
+    .then(processes => {
+        processes.forEach(proc => {
+            const option = document.createElement('option');
+            option.value = `assets/${proc.file}`;
+            option.textContent = proc.name;
+            assetsSelect.appendChild(option);
+        });
+    })
+    .catch(err => {
+        console.error('Error loading processes:', err);
+        errorMessage.textContent = 'Failed to load process list.';
         errorMessage.classList.remove('hidden');
-        return;
-    }
-    const file = csvUpload.files[0];
-    taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
-    Papa.parse(file, {
-        header: true,
-        complete: (result) => {
-            const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL', 'Duration'];
-            if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
-                errorMessage.textContent = 'Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.';
-                errorMessage.classList.remove('hidden');
-                return;
-            }
-            errorMessage.classList.add('hidden');
-            steps = result.data.map(step => ({
-                ...step,
-                Duration: parseInt(step.Duration) || 5 // Default to 5 seconds if not specified
-            })).sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
-            if (steps.length === 0) {
-                errorMessage.textContent = 'No valid steps found in CSV.';
-                errorMessage.classList.remove('hidden');
-                return;
-            }
-            startTime = new Date();
-            showStep(0);
-            uploadScreen.classList.add('hidden');
-            presentationScreen.classList.remove('hidden');
-            if (autoAdvanceCheckbox.checked) startAutoAdvance();
-        },
-        error: (err) => {
-            errorMessage.textContent = 'Error parsing CSV file.';
-            errorMessage.classList.remove('hidden');
-            console.error('CSV parse error:', err);
-        }
     });
+
+// Handle asset selection
+assetsSelect.addEventListener('change', () => {
+    const selectedFile = assetsSelect.value;
+    if (selectedFile) {
+        Papa.parse(`https://kappter.github.io/slidecraft/${selectedFile}`, {
+            download: true,
+            header: true,
+            complete: (result) => {
+                const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL', 'Duration'];
+                if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+                    errorMessage.textContent = 'Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+                errorMessage.classList.add('hidden');
+                steps = result.data.map(step => ({
+                    ...step,
+                    Duration: parseInt(step.Duration) || 5
+                })).sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+                taskName = selectedFile.replace('assets/', '').replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
+                startButton.disabled = false;
+            },
+            error: (err) => {
+                errorMessage.textContent = 'Error loading CSV file.';
+                errorMessage.classList.remove('hidden');
+                console.error('CSV load error:', err);
+            }
+        });
+    } else {
+        startButton.disabled = true;
+    }
 });
 
 // CSV upload event
 csvUpload.addEventListener('change', () => {
-    startButton.disabled = !csvUpload.files.length;
+    startButton.disabled = !csvUpload.files.length && !assetsSelect.value;
+});
+
+// Start button handler
+startButton.addEventListener('click', () => {
+    if (!csvUpload.files.length && !assetsSelect.value) {
+        errorMessage.textContent = 'Please select a CSV file or an asset.';
+        errorMessage.classList.remove('hidden');
+        return;
+    }
+    if (csvUpload.files.length) {
+        const file = csvUpload.files[0];
+        taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
+        Papa.parse(file, {
+            header: true,
+            complete: (result) => {
+                const requiredFields = ['Step', 'Description', 'Order Number', 'Image URL', 'Duration'];
+                if (!result.meta.fields || !requiredFields.every(field => result.meta.fields.includes(field))) {
+                    errorMessage.textContent = 'Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+                errorMessage.classList.add('hidden');
+                steps = result.data.map(step => ({
+                    ...step,
+                    Duration: parseInt(step.Duration) || 5
+                })).sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
+                if (steps.length === 0) {
+                    errorMessage.textContent = 'No valid steps found in CSV.';
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+                startTime = new Date();
+                showStep(0);
+                uploadScreen.classList.add('hidden');
+                presentationScreen.classList.remove('hidden');
+                if (autoAdvanceCheckbox.checked) startAutoAdvance();
+            },
+            error: (err) => {
+                errorMessage.textContent = 'Error parsing CSV file.';
+                errorMessage.classList.remove('hidden');
+                console.error('CSV parse error:', err);
+            }
+        });
+    } else {
+        // Asset already parsed in assetsSelect handler
+        startTime = new Date();
+        showStep(0);
+        uploadScreen.classList.add('hidden');
+        presentationScreen.classList.remove('hidden');
+        if (autoAdvanceCheckbox.checked) startAutoAdvance();
+    }
 });
 
 // Presentation navigation
@@ -103,7 +151,7 @@ function showStep(index) {
     stepImage.onerror = () => { stepImage.src = 'assets/placeholder.jpg'; };
     prevButton.classList.toggle('hidden', index === 0);
     nextButton.textContent = index === steps.length - 1 ? 'Start Quiz' : 'Next';
-    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval); // Clear previous interval
+    if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
     if (autoAdvanceCheckbox.checked && index < steps.length - 1) startAutoAdvance();
 }
 
@@ -129,7 +177,7 @@ function startAutoAdvance() {
             quizScreen.classList.remove('hidden');
             generateQuiz();
         }
-    }, steps[currentStep].Duration * 1000); // Convert seconds to milliseconds
+    }, steps[currentStep].Duration * 1000);
 }
 
 // Keyboard navigation
@@ -229,7 +277,6 @@ generateReport.addEventListener('click', () => {
     const minutes = Math.floor((timeTaken % 3600) / 60);
     const seconds = timeTaken % 60;
     
-    // Header
     doc.setFillColor(30, 64, 175);
     doc.rect(0, 0, 210, 20, 'F');
     doc.setFont('helvetica', 'bold');
@@ -237,7 +284,6 @@ generateReport.addEventListener('click', () => {
     doc.setTextColor(255, 255, 255);
     doc.text(`SlideCraft Report: ${taskName}`, 10, 15);
     
-    // User Info Section
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
@@ -249,7 +295,6 @@ generateReport.addEventListener('click', () => {
     if (timeTaken > averageTime) doc.setTextColor(220, 20, 60);
     doc.text(`Performance: ${timeTaken < averageTime ? 'Faster' : timeTaken > averageTime ? 'Slower' : 'Equal'} than average`, 10, 70);
     
-    // Quiz Results Section
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.setTextColor(0, 0, 0);
@@ -267,7 +312,6 @@ generateReport.addEventListener('click', () => {
         yPos += 25;
     });
     
-    // Process Steps Section
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.text('Process Steps:', 10, yPos);
@@ -277,7 +321,6 @@ generateReport.addEventListener('click', () => {
         doc.text(`${index + 1}. ${step.Step}: ${step.Description.substring(0, 50)}${step.Description.length > 50 ? '...' : ''} (Duration: ${step.Duration}s)`, 10, yPos + 10 + index * 10);
     });
     
-    // Add User Photo
     if (userPhoto) {
         doc.addImage(userPhoto, 'JPEG', 10, yPos + 10 + steps.length * 10, 50, 50);
     }

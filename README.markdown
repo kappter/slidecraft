@@ -1,9 +1,10 @@
 # SlideCraft
 
-SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, view them in a full-screen, clickable interface (optimized for phones and projectors), select from multiple themes (Light, Dark), and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a PDF report suitable for submission to Canvas or other learning management systems.
+SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, select from predefined processes, view them in a full-screen, clickable interface (optimized for phones and projectors), choose between Light and Dark themes, and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a PDF report suitable for submission to Canvas or other learning management systems.
 
 ## Features
 - **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`, `Duration`).
+- **Predefined Processes**: Select from a list of built-in processes stored in `assets/` via a dropdown.
 - **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons, keyboard navigation (arrow keys), and optional auto-advance based on duration.
 - **Theme Selection**: Choose from Light or Dark themes for optimal visibility on mobile devices or projectors.
 - **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the PDF report.
@@ -22,7 +23,8 @@ slidecraft/
 ├── assets/
 │   ├── sample.csv           # Sample CSV file
 │   ├── placeholder.jpg      # Fallback image for invalid URLs
-│   └── favicon.ico          # Optional favicon
+│   ├── favicon.ico          # Optional favicon
+│   ├── processes.json       # List of available process CSVs
 ├── README.md                # This file
 └── .gitignore               # Git ignore file
 ```
@@ -32,7 +34,7 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/[YourUsername]/slidecraft.git
+   git clone https://github.com/kappter/slidecraft.git
    cd slidecraft
    ```
 
@@ -46,12 +48,12 @@ No installation is required, as SlideCraft runs entirely in the browser. To set 
 3. **Deploy to GitHub Pages**:
    - Push the repository to GitHub.
    - Enable GitHub Pages in the repository settings, selecting the `main` branch and `/ (root)` directory.
-   - Access the app at `https://[YourUsername].github.io/slidecraft`.
+   - Access the app at `https://kappter.github.io/slidecraft`.
 
 ## Usage
 1. Open the app in a browser (desktop, phone, or projector).
 2. Select a theme (Light or Dark) from the header dropdown for optimal visibility.
-3. Upload a CSV file containing process steps (see [CSV Format](#csv-format) below).
+3. Choose a predefined process from the "Select Asset" dropdown or upload a custom CSV file containing process steps (see [CSV Format](#csv-format) below).
 4. Check 'Auto-Advance' to move slides automatically based on the Duration column (default 5 seconds).
 5. Click 'Start' to begin the guided process.
 6. Complete the 5-question multiple-choice quiz.
@@ -76,7 +78,7 @@ Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg,5
 ```
 
 ## Dependencies
-All dependencies are loaded via CDN or included locally:
+All dependencies are loaded via CDN:
 - **Tailwind CSS**: For responsive styling.
 - **Papa Parse**: For CSV parsing.
 - **jsPDF**: For PDF generation.
@@ -93,4 +95,4 @@ Contributions are welcome! Please:
 This project is licensed under the MIT License.
 
 ## Contact
-For questions or feedback, open an issue on GitHub or contact [Your Contact Info].
+For questions or feedback, open an issue on GitHub.
