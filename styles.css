@@ -133,7 +133,7 @@ header, footer {
 footer {
     background-color: #1a202c; /* Darker solid background */
     color: #ffffff;
-    height: 80px; /* Increased height */
+    height: 96px; /* Increased height */
     border-top: 2px solid #4a5568; /* Visible border */
 }
 
@@ -211,11 +211,11 @@ select:focus {
 @media (max-width: 640px) {
     header, footer {
         padding: 0.5rem;
-        height: 12px;
+        height: auto;
     }
     main {
-        padding-top: 12px;
-        padding-bottom: 12px;
+        padding-top: 8px;
+        padding-bottom: 8px;
     }
     #upload-screen, #quiz-screen, #report-preview {
         padding: 1rem;
@@ -228,10 +228,10 @@ select:focus {
 @media (min-width: 641px) {
     header, footer {
         padding: 1rem;
-        height: 12px;
+        height: auto;
     }
     main {
-        padding-top: 16px;
-        padding-bottom: 20px;
+        padding-top: 8px;
+        padding-bottom: 24px;
     }
 }

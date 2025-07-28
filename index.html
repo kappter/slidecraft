@@ -50,14 +50,14 @@
     <script src="main.js" defer></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col theme-earthy">
-    <header class="fixed top-0 left-0 w-full p-4 bg-green-800 text-white rounded-b-lg shadow-lg h-16 z-20">
-        <div class="flex items-center justify-center">
+    <header class="fixed top-0 left-0 w-full p-2 bg-green-800 text-white rounded-b-lg shadow-lg z-20">
+        <div class="flex items-start justify-center">
             <h1 class="text-xl font-bold">SlideCraft</h1>
-            <select id="theme-select" class="ml-4 p-2 border-none rounded-lg bg-white bg-opacity-50 text-white">
+            <select id="theme-select" class="ml-2 p-1 border-none rounded-lg bg-white bg-opacity-50 text-white">
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
-            <select id="design-select" class="ml-4 p-2 border-none rounded-lg bg-white bg-opacity-50 text-white">
+            <select id="design-select" class="ml-2 p-1 border-none rounded-lg bg-white bg-opacity-50 text-white">
                 <option value="earthy">Earthy</option>
                 <option value="architecture">Architecture</option>
                 <option value="medieval">Medieval</option>
@@ -66,7 +66,7 @@
         </div>
     </header>
 
-    <main class="flex-grow pt-16 pb-20 px-4">
+    <main class="flex-grow pt-8 pb-24 px-4">
         <div class="max-w-4xl mx-auto">
             <section id="upload-screen" class="mt-4 p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md">
                 <h2 class="text-xl font-semibold mb-4 text-cushion">Welcome to SlideCraft</h2>
@@ -113,9 +113,9 @@
                 <div id="quiz-content" class="m-4"></div>
                 <div class="mt-4 m-4">
                     <label for="photo-upload-quiz" class="block text-base font-medium mb-2 text-cushion">Upload Photo <span class="text-red-600">*</span></label>
-                    <div class="relative pointer-events-none">
+                    <div class="relative">
                         <input type="file" id="photo-upload-quiz" accept="image/jpeg,image/png" class="photo-upload absolute inset-0 w-full h-full opacity-0" required>
-                        <span class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center cursor-pointer">Choose File</span>
+                        <span id="choose-file-span" class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center cursor-pointer">Choose File</span>
                     </div>
                     <img id="photo-preview-quiz" class="hidden mt-2 max-w-xs rounded-lg" src="" alt="User Uploaded Photo">
                     <p class="text-sm text-gray-600 mt-1">Required (JPEG/PNG, max 5MB)</p>
@@ -148,10 +148,10 @@
         </div>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full p-4 bg-gray-900 text-white rounded-t-lg shadow-lg h-20 z-10 border-t border-gray-600">
-        <div class="flex items-center justify-center h-full">
-            <p id="time-info" class="text-white text-lg mr-4"></p>
-            <p id="version-info" class="text-white text-lg">Version: 002-001-001-032</p>
+    <footer class="fixed bottom-0 left-0 w-full p-2 bg-gray-900 text-white rounded-t-lg shadow-lg h-24 z-10 border-t border-gray-600">
+        <div class="flex flex-col items-start justify-center h-full pl-4">
+            <p id="time-info" class="text-white text-lg"></p>
+            <p id="version-info" class="text-white text-lg">Version: 002-001-001-033</p>
         </div>
     </footer>
 </body>

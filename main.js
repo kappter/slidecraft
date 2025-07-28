@@ -38,6 +38,7 @@ const versionInfo = document.getElementById('version-info');
 const reportContent = document.getElementById('report-content');
 const printReport = document.getElementById('print-report');
 const designSelect = document.getElementById('design-select');
+const chooseFileSpan = document.getElementById('choose-file-span');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
@@ -329,6 +330,10 @@ submitQuiz.addEventListener('click', () => {
 photoUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     handlePhotoUpload(file, photoPreview);
+});
+
+chooseFileSpan.addEventListener('click', () => {
+    photoUploadQuiz.click();
 });
 
 photoUploadQuiz.addEventListener('change', (event) => {
