@@ -108,9 +108,18 @@
                 </div>
             </section>
 
-            <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md mt-16">
+            <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md mt-24">
                 <h2 class="text-xl font-semibold mb-4 m-4">Quiz</h2>
                 <div id="quiz-content" class="m-4"></div>
+                <div class="mt-4 m-4">
+                    <label for="photo-upload-quiz" class="block text-base font-medium mb-2 text-cushion cursor-pointer">Upload Photo <span class="text-red-600">*</span></label>
+                    <div class="relative">
+                        <input type="file" id="photo-upload-quiz" accept="image/jpeg,image/png" class="photo-upload absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                        <span class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center">Choose File</span>
+                    </div>
+                    <img id="photo-preview-quiz" class="hidden mt-2 max-w-xs rounded-lg" src="" alt="User Uploaded Photo">
+                    <p class="text-sm text-gray-600 mt-1">Required (JPEG/PNG, max 5MB)</p>
+                </div>
                 <button id="submit-quiz" class="mt-4 p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg m-2 hidden">Submit Quiz</button>
             </section>
 
@@ -139,10 +148,10 @@
         </div>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full p-4 bg-gray-700 text-white rounded-t-lg shadow-lg h-12 z-10">
+    <footer class="fixed bottom-0 left-0 w-full p-4 bg-white bg-opacity-80 rounded-t-lg shadow-lg h-12 z-10">
         <div class="flex items-center justify-center">
-            <p id="time-info" class="text-sm mr-4"></p>
-            <p id="version-info" class="text-sm">Version: 002-001-001-028</p>
+            <p id="time-info" class="text-base mr-4"></p>
+            <p id="version-info" class="text-base">Version: 002-001-001-029</p>
         </div>
     </footer>
 </body>

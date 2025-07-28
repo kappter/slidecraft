@@ -130,6 +130,10 @@ header, footer {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+footer {
+    background-color: rgba(255, 255, 255, 0.8); /* Higher opacity for legibility */
+}
+
 /* Image size limit for presentation with larger inkblots */
 #step-image {
     max-height: 128px;

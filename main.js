@@ -30,6 +30,8 @@ const reportNameInput = document.getElementById('report-name');
 const userNameInput = document.getElementById('user-name');
 const photoUpload = document.getElementById('photo-upload');
 const photoPreview = document.getElementById('photo-preview');
+const photoUploadQuiz = document.getElementById('photo-upload-quiz');
+const photoPreviewQuiz = document.getElementById('photo-preview-quiz');
 const autoAdvanceCheckbox = document.getElementById('auto-advance');
 const timeInfo = document.getElementById('time-info');
 const versionInfo = document.getElementById('version-info');
@@ -298,8 +300,8 @@ function generateQuiz() {
 
 // Quiz submission
 submitQuiz.addEventListener('click', () => {
-    console.log('Photo upload element:', photoUpload); // Debug log
-    if (!photoUpload.files || !photoUpload.files[0]) {
+    console.log('Photo upload element:', photoUploadQuiz); // Debug log
+    if (!photoUploadQuiz.files || !photoUploadQuiz.files[0]) {
         alert('Please upload a photo before submitting the report.');
         return;
     }
@@ -322,29 +324,39 @@ submitQuiz.addEventListener('click', () => {
     generateReportPreview();
 });
 
-// Photo upload
+// Photo upload (quiz and report)
 photoUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
+    handlePhotoUpload(file, photoPreview);
+});
+
+photoUploadQuiz.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    handlePhotoUpload(file, photoPreviewQuiz);
+});
+
+function handlePhotoUpload(file, previewElement) {
     if (!file || file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
         alert('Please upload a JPEG or PNG image under 5MB.');
-        photoUpload.value = ''; // Clear invalid file
-        photoPreview.classList.add('hidden');
+        photoUpload.value = '';
+        photoUploadQuiz.value = '';
+        previewElement.classList.add('hidden');
         userPhoto = null;
         return;
     }
     const reader = new FileReader();
     reader.onload = () => {
         userPhoto = reader.result;
-        photoPreview.src = userPhoto;
-        photoPreview.classList.remove('hidden');
-        if (reportPreview.classList.contains('hidden')) {
+        previewElement.src = userPhoto;
+        previewElement.classList.remove('hidden');
+        if (reportPreview.classList.contains('hidden') && previewElement === photoPreviewQuiz) {
             generateReportPreview();
-        } else {
+        } else if (!reportPreview.classList.contains('hidden') && previewElement === photoPreview) {
             generateReportPreview();
         }
     };
     reader.readAsDataURL(file);
-});
+}
 
 // Report preview generation
 function generateReportPreview() {
@@ -402,7 +414,7 @@ function generateReportPreview() {
 
 // Print report
 printReport.addEventListener('click', () => {
-    if (!userPhoto || !photoUpload.files || !photoUpload.files[0]) {
+    if (!userPhoto || !photoUpload.files && !photoUploadQuiz.files) {
         alert('Please upload a photo before printing the report.');
         return;
     }
