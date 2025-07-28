@@ -69,28 +69,26 @@
     <main class="flex-grow pt-16 pb-16 px-4">
         <div class="max-w-4xl mx-auto">
             <section id="upload-screen" class="mt-4 p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md">
-                <h2 class="text-xl font-semibold mb-4">Welcome to SlideCraft</h2>
-                <p class="text-base font-medium mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
-                <ul class="list-disc pl-5 mb-4">
-                    <li class="text-base font-medium mb-2">Select a theme (Light or Dark) for best visibility.</li>
-                    <li class="text-base font-medium mb-2">Upload a CSV file with steps (Step, Description, Order Number, Image URL, Duration).</li>
-                    <li class="text-base font-medium mb-2">Check 'Auto-Advance' to move slides automatically based on duration (default 5 seconds).</li>
-                    <li class="text-base font-medium mb-2">Click 'Start' to begin the guided process.</li>
-                    <li class="text-base font-medium mb-2">Complete the quiz and generate a PDF report.</li>
+                <h2 class="text-xl font-semibold mb-4 text-cushion">Welcome to SlideCraft</h2>
+                <p class="text-base font-medium mb-4 text-cushion">Create interactive process guides with ease. Follow these steps:</p>
+                <ul class="list-disc pl-5 mb-4 text-cushion">
+                    <li class="text-base font-medium mb-2">Choose a theme for visibility.</li>
+                    <li class="text-base font-medium mb-2">Upload a CSV with steps.</li>
+                    <li class="text-base font-medium mb-2">Start the guide and complete the quiz.</li>
                 </ul>
-                <p class="text-base font-medium mb-4">Our vision: Empower learning with simple, mobile-friendly tools for process mastery.</p>
+                <p class="text-base font-medium mb-4 text-cushion">Empower learning with simple, mobile-friendly tools.</p>
                 <div class="mb-4">
-                    <label class="flex items-center text-base font-medium mb-2">
+                    <label class="flex items-center text-base font-medium mb-2 text-cushion">
                         <input type="checkbox" id="auto-advance" class="mr-2">
                         Auto-Advance Slides
                     </label>
                 </div>
                 <div class="mb-4">
-                    <label for="csv-upload" class="block text-base font-medium mb-2">Upload CSV</label>
+                    <label for="csv-upload" class="block text-base font-medium mb-2 text-cushion">Upload CSV</label>
                     <input type="file" id="csv-upload" accept=".csv" class="p-2 border-none rounded-lg w-full bg-gray-100">
                 </div>
                 <div class="mb-4">
-                    <label for="assets-select" class="block text-base font-medium mb-2">Select Asset</label>
+                    <label for="assets-select" class="block text-base font-medium mb-2 text-cushion">Select Asset</label>
                     <select id="assets-select" class="p-2 border-none rounded-lg w-full bg-gray-100">
                         <option value="">Select an asset</option>
                     </select>
@@ -120,16 +118,19 @@
                 <h2 class="text-xl font-semibold mb-4">Report Preview</h2>
                 <div id="report-content"></div>
                 <div class="mt-4">
-                    <label for="report-name" class="block text-base font-medium mb-2">Report Name <span class="text-red-600">*</span></label>
+                    <label for="report-name" class="block text-base font-medium mb-2 text-cushion">Report Name <span class="text-red-600">*</span></label>
                     <input type="text" id="report-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-gray-100" placeholder="Enter report name" required>
                 </div>
                 <div class="mt-4">
-                    <label for="user-name" class="block text-base font-medium mb-2">Your Name</label>
+                    <label for="user-name" class="block text-base font-medium mb-2 text-cushion">Your Name</label>
                     <input type="text" id="user-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-gray-100">
                 </div>
                 <div class="mt-4">
-                    <label for="photo-upload" class="block text-base font-medium mb-2">Upload Photo <span class="text-red-600">*</span></label>
-                    <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="p-2 border-none rounded-lg w-full" required>
+                    <label for="photo-upload" class="block text-base font-medium mb-2 text-cushion cursor-pointer">Upload Photo <span class="text-red-600">*</span></label>
+                    <div class="relative">
+                        <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="photo-upload absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                        <span class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center">Choose File</span>
+                    </div>
                     <img id="photo-preview" class="hidden mt-2 max-w-xs rounded-lg" src="" alt="User Uploaded Photo">
                     <p class="text-sm text-gray-600 mt-1">Required (JPEG/PNG, max 5MB)</p>
                 </div>
@@ -141,7 +142,7 @@
     <footer class="fixed bottom-0 left-0 w-full p-4 bg-gray-700 text-white rounded-t-lg shadow-lg h-16 z-10">
         <div class="flex items-center justify-center">
             <p id="time-info" class="text-sm mr-4"></p>
-            <p id="version-info" class="text-sm">Version: 002-001-001-025</p>
+            <p id="version-info" class="text-sm">Version: 002-001-001-027</p>
         </div>
     </footer>
 </body>

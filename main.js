@@ -44,7 +44,7 @@ themeSelect.addEventListener('change', () => {
 
 // Design toggle
 designSelect.addEventListener('change', () => {
-    document.body.className = `${themeSelect.value}-theme min-h-screen flex flex-col ${designSelect.value}`;
+    document.body.className = `${themeSelect.value}-theme min-h-screen flex-col ${designSelect.value}`;
 });
 
 // Populate assets dropdown from processes.json
@@ -298,6 +298,7 @@ function generateQuiz() {
 
 // Quiz submission
 submitQuiz.addEventListener('click', () => {
+    console.log('Photo upload element:', photoUpload); // Debug log
     if (!photoUpload.files || !photoUpload.files[0]) {
         alert('Please upload a photo before submitting the report.');
         return;
