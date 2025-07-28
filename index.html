@@ -50,7 +50,7 @@
     <script src="main.js" defer></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col">
-    <header class="fixed top-0 left-0 w-full p-2 z-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-b-lg shadow-lg h-12 md:h-16">
+    <header class="fixed top-0 left-0 w-full p-2 z-20 bg-blue-800 text-white rounded-b-lg shadow-lg h-12 md:h-16">
         <div class="flex items-center justify-center">
             <h1 class="text-lg font-bold">SlideCraft</h1>
             <select id="theme-select" class="ml-4 p-2 border-none rounded-lg bg-white bg-opacity-20 text-white">
@@ -61,78 +61,78 @@
     </header>
 
     <main class="flex-grow pt-12 md:pt-16 pb-12 md:pb-16 px-4">
-        <section id="upload-screen" class="max-w-2xl mx-auto mt-4 p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Welcome to SlideCraft</h2>
-            <p class="text-base font-medium mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
-            <ul class="list-disc pl-5 mb-4">
+        <section id="upload-screen" class="max-w-2xl mx-auto mt-4 p-6 bg-white bg-opacity-90 rounded-lg shadow-md mondrian-grid">
+            <h2 class="text-xl font-semibold mb-4 haring-outline">Welcome to SlideCraft</h2>
+            <p class="text-base font-medium mb-4 haring-outline">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
+            <ul class="list-disc pl-5 mb-4 haring-outline">
                 <li class="text-base font-medium mb-2">Select a theme (Light or Dark) for best visibility.</li>
                 <li class="text-base font-medium mb-2">Upload a CSV file with steps (Step, Description, Order Number, Image URL, Duration).</li>
                 <li class="text-base font-medium mb-2">Check 'Auto-Advance' to move slides automatically based on duration (default 5 seconds).</li>
                 <li class="text-base font-medium mb-2">Click 'Start' to begin the guided process.</li>
                 <li class="text-base font-medium mb-2">Complete the quiz and generate a PDF report.</li>
             </ul>
-            <p class="text-base font-medium mb-4">Our vision: Empower learning with simple, mobile-friendly tools for process mastery.</p>
+            <p class="text-base font-medium mb-4 haring-outline">Our vision: Empower learning with simple, mobile-friendly tools for process mastery.</p>
             <div class="mb-4">
-                <label class="flex items-center text-base font-medium mb-2">
+                <label class="flex items-center text-base font-medium mb-2 haring-outline">
                     <input type="checkbox" id="auto-advance" class="mr-2">
                     Auto-Advance Slides
                 </label>
             </div>
             <div class="mb-4">
-                <label for="csv-upload" class="block text-base font-medium mb-2">Upload CSV</label>
+                <label for="csv-upload" class="block text-base font-medium mb-2 haring-outline">Upload CSV</label>
                 <input type="file" id="csv-upload" accept=".csv" class="p-2 border-none rounded-lg w-full bg-gray-100">
             </div>
             <div class="mb-4">
-                <label for="assets-select" class="block text-base font-medium mb-2">Select Asset</label>
+                <label for="assets-select" class="block text-base font-medium mb-2 haring-outline">Select Asset</label>
                 <select id="assets-select" class="p-2 border-none rounded-lg w-full bg-gray-100">
                     <option value="">Select an asset</option>
                 </select>
             </div>
-            <button id="start-button" class="p-2 bg-blue-600 text-white rounded-lg w-full shadow-md hover:bg-blue-700 disabled:bg-gray-300" disabled>Start</button>
-            <p id="error-message" class="hidden mt-2 text-red-600">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
+            <button id="start-button" class="p-2 bg-blue-600 text-white rounded-lg w-full shadow-md hover:bg-blue-700 drop-shadow-lg" disabled>Start</button>
+            <p id="error-message" class="hidden mt-2 text-red-600 haring-outline">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
         </section>
 
         <section id="presentation-screen" class="hidden h-full flex flex-col items-center justify-center">
-            <h2 id="step-title" class="text-2xl font-bold mb-4"></h2>
-            <p id="step-number" class="text-base font-medium mb-4"></p>
-            <p id="step-description" class="mb-4 text-center max-w-md"></p>
+            <h2 id="step-title" class="text-2xl font-bold mb-4 haring-outline"></h2>
+            <p id="step-number" class="text-base font-medium mb-4 haring-outline"></p>
+            <p id="step-description" class="mb-4 text-center max-w-md haring-outline"></p>
             <img id="step-image" class="mb-4 max-w-full h-auto rounded-lg" src="assets/placeholder.jpg" alt="Step Image">
             <div class="flex space-x-4">
-                <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 hidden">Previous</button>
-                <button id="next-button" class="p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">Next</button>
+                <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 drop-shadow-lg hidden">Previous</button>
+                <button id="next-button" class="p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg">Next</button>
             </div>
         </section>
 
-        <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Quiz</h2>
+        <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-90 rounded-lg shadow-md mondrian-grid">
+            <h2 class="text-xl font-semibold mb-4 haring-outline">Quiz</h2>
             <div id="quiz-content"></div>
-            <button id="submit-quiz" class="mt-4 p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 hidden">Submit Quiz</button>
+            <button id="submit-quiz" class="mt-4 p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg hidden">Submit Quiz</button>
         </section>
 
-        <section id="report-preview" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Report Preview</h2>
+        <section id="report-preview" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-90 rounded-lg shadow-md mondrian-grid">
+            <h2 class="text-xl font-semibold mb-4 haring-outline">Report Preview</h2>
             <div id="report-content"></div>
             <div class="mt-4">
-                <label for="report-name" class="block text-base font-medium mb-2">Report Name <span class="text-red-600">*</span></label>
+                <label for="report-name" class="block text-base font-medium mb-2 haring-outline">Report Name <span class="text-red-600">*</span></label>
                 <input type="text" id="report-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-gray-100" placeholder="Enter report name" required>
             </div>
             <div class="mt-4">
-                <label for="user-name" class="block text-base font-medium mb-2">Your Name</label>
+                <label for="user-name" class="block text-base font-medium mb-2 haring-outline">Your Name</label>
                 <input type="text" id="user-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-gray-100">
             </div>
             <div class="mt-4">
-                <label for="photo-upload" class="block text-base font-medium mb-2">Upload Photo <span class="text-red-600">*</span></label>
+                <label for="photo-upload" class="block text-base font-medium mb-2 haring-outline">Upload Photo <span class="text-red-600">*</span></label>
                 <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="p-2 border-none rounded-lg" required>
                 <img id="photo-preview" class="hidden mt-2 max-w-xs rounded-lg" src="" alt="User Uploaded Photo">
-                <p class="text-sm text-gray-600 mt-1">Required (JPEG/PNG, max 5MB)</p>
+                <p class="text-sm text-gray-600 mt-1 haring-outline">Required (JPEG/PNG, max 5MB)</p>
             </div>
-            <button id="print-report" class="mt-4 p-2 bg-blue-600 text-white rounded-lg w-full shadow-md hover:bg-blue-700">Print Report</button>
+            <button id="print-report" class="mt-4 p-2 bg-blue-600 text-white rounded-lg w-full shadow-md hover:bg-blue-700 drop-shadow-lg">Print Report</button>
         </section>
     </main>
 
-    <footer id="footer" class="fixed bottom-0 left-0 w-full p-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-lg shadow-lg h-12 md:h-16">
-        <p id="time-info" class="text-sm"></p>
-        <p id="version-info" class="text-sm">Version: 002-001-001-020</p>
+    <footer id="footer" class="fixed bottom-0 left-0 w-full p-4 bg-gray-800 text-white rounded-t-lg shadow-lg h-12 md:h-16 flex items-center justify-center">
+        <p id="time-info" class="text-sm mr-4"></p>
+        <p id="version-info" class="text-sm">Version: 002-001-001-021</p>
     </footer>
 </body>
 </html>
