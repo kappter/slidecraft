@@ -213,6 +213,7 @@ nextButton.addEventListener('click', () => {
 // Auto-advance function
 function startAutoAdvance() {
     if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
+    const duration = steps[currentStep].Duration * 1000; // Use CSV Duration
     autoAdvanceInterval = setInterval(() => {
         if (currentStep < steps.length - 1) {
             showStep(currentStep + 1);
@@ -223,7 +224,7 @@ function startAutoAdvance() {
             quizScreen.classList.remove('hidden');
             generateQuiz();
         }
-    }, steps[currentStep].Duration * 1000);
+    }, duration);
 }
 
 // Time update function

@@ -133,6 +133,7 @@ header, footer {
 footer {
     background-color: #4a5568; /* Solid dark gray for legibility */
     color: #ffffff;
+    height: 64px; /* Ensure sufficient height */
 }
 
 /* Image size limit for presentation with larger inkblots */
@@ -161,7 +162,6 @@ body.dark-theme .text-cushion {
     width: 100%;
     height: 100%;
     opacity: 0;
-    cursor: pointer;
     z-index: 1; /* Ensure it stays behind the label */
 }
 
@@ -231,6 +231,6 @@ select:focus {
     }
     main {
         padding-top: 16px;
-        padding-bottom: 12px;
+        padding-bottom: 16px;
     }
 }
