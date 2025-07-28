@@ -1,3 +1,5 @@
 [
-    {"name": "Peanut Butter Sandwich", "file": "sample.csv"}
+    {"name": "Peanut Butter Sandwich", "file": "sample.csv"},
+    {"name": "Wind Down Routine", "file": "wind-down-routine.csv"},
+    {"name": "Study Environment", "file": "study-environment.csv"}
 ]
