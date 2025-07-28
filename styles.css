@@ -1,14 +1,39 @@
-/* Custom styles for ethereal background and polished UI */
+/* Custom styles for calm earthy design and theme options */
 body {
-    background: linear-gradient(45deg, #87ceeb, #9370db, #e6e6fa);
-    background-size: 200% 200%;
-    animation: etherealMorph 60s ease infinite;
+    background: linear-gradient(to bottom, #f5f5dc, #8a9a5b);
+    transition: background 1s ease;
 }
 
-@keyframes etherealMorph {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
+body.light-theme.theme-earthy {
+    background: linear-gradient(to bottom, #f5f5dc, #8a9a5b); /* Beige to olive green */
+}
+
+body.dark-theme.theme-earthy {
+    background: linear-gradient(to bottom, #4a4e3d, #2f3a2e); /* Dark green to deeper green */
+}
+
+body.light-theme.theme-architecture {
+    background: linear-gradient(to bottom, #e0e0e0, #a9a9a9); /* Concrete gray tones */
+}
+
+body.dark-theme.theme-architecture {
+    background: linear-gradient(to bottom, #333333, #666666); /* Dark steel gray */
+}
+
+body.light-theme.theme-medieval {
+    background: linear-gradient(to bottom, #d2b48c, #8b4513); /* Tan to brown */
+}
+
+body.dark-theme.theme-medieval {
+    background: linear-gradient(to bottom, #5c4033, #2f1b0c); /* Dark wood tones */
+}
+
+body.light-theme.theme-space {
+    background: linear-gradient(to bottom, #1e1e2f, #4a90e2); /* Deep space to blue nebula */
+}
+
+body.dark-theme.theme-space {
+    background: linear-gradient(to bottom, #0a0a1a, #1e40af); /* Black space to dark blue */
 }
 
 body.light-theme {
@@ -16,7 +41,6 @@ body.light-theme {
 }
 
 body.dark-theme {
-    background: linear-gradient(45deg, #1a1a2e, #4a5568, #2d3748);
     color: #e2e8f0;
 }
 
@@ -52,7 +76,7 @@ body.dark-theme #error-message {
     color: #fc8181;
 }
 
-/* Ensure content panels are readable over ethereal background */
+/* Ensure content panels are readable */
 #upload-screen,
 #presentation-screen,
 #quiz-screen,
@@ -68,26 +92,6 @@ body.dark-theme #presentation-screen,
 body.dark-theme #quiz-screen,
 body.dark-theme #report-preview {
     background-color: rgba(45, 55, 72, 0.9);
-}
-
-/* Keith Haring and Piet Mondrian styles */
-.haring-outline {
-    border: 4px solid #000;
-    padding: 2px;
-    background-clip: padding-box;
-    color: #333;
-}
-
-.mondrian-grid {
-    background-image: 
-        linear-gradient(to right, #fff 50%, #000 50%),
-        linear-gradient(to bottom, #fff 50%, #000 50%),
-        linear-gradient(to right, #ff0000 20%, transparent 20%),
-        linear-gradient(to right, #0000ff 40%, transparent 40%),
-        linear-gradient(to right, #ffff00 60%, transparent 60%);
-    background-size: 100px 100px, 100px 100px, 100px 100px, 100px 100px, 100px 100px;
-    background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
-    background-repeat: repeat;
 }
 
 /* Ensure buttons are readable */

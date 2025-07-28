@@ -35,10 +35,16 @@ const timeInfo = document.getElementById('time-info');
 const versionInfo = document.getElementById('version-info');
 const reportContent = document.getElementById('report-content');
 const printReport = document.getElementById('print-report');
+const designSelect = document.getElementById('design-select');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
-    document.body.className = themeSelect.value + '-theme min-h-screen flex flex-col';
+    document.body.className = `${themeSelect.value}-theme min-h-screen flex flex-col ${designSelect.value}`;
+});
+
+// Design toggle
+designSelect.addEventListener('change', () => {
+    document.body.className = `${themeSelect.value}-theme min-h-screen flex flex-col ${designSelect.value}`;
 });
 
 // Populate assets dropdown from processes.json
