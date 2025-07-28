@@ -114,13 +114,18 @@ body.dark-theme #report-preview {
     background-color: #2563eb;
 }
 
-/* Footer styling */
-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Header and footer styling */
+header, footer {
     background-color: #4a5568;
-    border-top: 2px solid #2d3748;
+    border-bottom: 1px solid #2d3748;
+    border-top: 1px solid #2d3748;
+}
+
+/* Image size limit for presentation */
+#step-image {
+    max-height: 64px;
+    max-width: 100%;
+    object-fit: contain;
 }
 
 /* Ensure images and inputs are centered and styled */
@@ -147,12 +152,12 @@ select:focus {
 /* Responsive adjustments */
 @media (max-width: 640px) {
     header, footer {
-        padding: 1rem;
-        height: 12px;
+        padding: 0.5rem;
+        height: 10px;
     }
     main {
-        padding-top: 12px;
-        padding-bottom: 12px;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
     #upload-screen, #quiz-screen, #report-preview {
         padding: 1rem;
@@ -164,11 +169,11 @@ select:focus {
 
 @media (min-width: 641px) {
     header, footer {
-        padding: 2rem;
-        height: 16px;
+        padding: 1rem;
+        height: 12px;
     }
     main {
-        padding-top: 16px;
-        padding-bottom: 16px;
+        padding-top: 12px;
+        padding-bottom: 12px;
     }
 }

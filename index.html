@@ -50,7 +50,7 @@
     <script src="main.js" defer></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col theme-earthy">
-    <header class="fixed top-0 left-0 w-full p-2 z-20 bg-blue-800 text-white rounded-b-lg shadow-lg h-12 md:h-16">
+    <header class="w-full p-2 bg-green-800 text-white rounded-b-lg shadow-md h-10 md:h-12">
         <div class="flex items-center justify-center">
             <h1 class="text-lg font-bold">SlideCraft</h1>
             <select id="theme-select" class="ml-4 p-2 border-none rounded-lg bg-white bg-opacity-20 text-white">
@@ -66,7 +66,7 @@
         </div>
     </header>
 
-    <main class="flex-grow pt-12 md:pt-16 pb-12 md:pb-16 px-4">
+    <main class="flex-grow pt-10 md:pt-12 pb-10 md:pb-12 px-4">
         <section id="upload-screen" class="max-w-2xl mx-auto mt-4 p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4">Welcome to SlideCraft</h2>
             <p class="text-base font-medium mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
@@ -98,11 +98,11 @@
             <p id="error-message" class="hidden mt-2 text-red-600">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
         </section>
 
-        <section id="presentation-screen" class="hidden h-full flex flex-col items-center justify-center">
+        <section id="presentation-screen" class="h-full flex flex-col items-center justify-center">
             <h2 id="step-title" class="text-2xl font-bold mb-4"></h2>
             <p id="step-number" class="text-base font-medium mb-4"></p>
             <p id="step-description" class="mb-4 text-center max-w-md"></p>
-            <img id="step-image" class="mb-4 max-w-full h-auto rounded-lg" src="assets/placeholder.jpg" alt="Step Image">
+            <img id="step-image" class="mb-4 max-w-full max-h-64 rounded-lg" src="assets/placeholder.jpg" alt="Step Image">
             <div class="flex space-x-4">
                 <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 drop-shadow-lg hidden">Previous</button>
                 <button id="next-button" class="p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg">Next</button>
@@ -136,9 +136,11 @@
         </section>
     </main>
 
-    <footer id="footer" class="fixed bottom-0 left-0 w-full p-4 bg-gray-800 text-white rounded-t-lg shadow-lg h-12 md:h-16 flex items-center justify-center">
-        <p id="time-info" class="text-sm mr-4"></p>
-        <p id="version-info" class="text-sm">Version: 002-001-001-022</p>
+    <footer class="w-full p-2 bg-gray-700 text-white rounded-t-lg shadow-md h-10 md:h-12">
+        <div class="flex items-center justify-center">
+            <p id="time-info" class="text-sm mr-4"></p>
+            <p id="version-info" class="text-sm">Version: 002-001-001-023</p>
+        </div>
     </footer>
 </body>
 </html>
