@@ -38,7 +38,7 @@ const printReport = document.getElementById('print-report');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
-    document.body.className = themeSelect.value + '-theme min-h-screen flex flex-col';
+    document.body.className = themeSelect.value + '-theme min-h-screen flex flex-col bg-gray-100';
 });
 
 // Populate assets dropdown from processes.json
@@ -51,12 +51,20 @@ fetch('assets/processes.json')
     })
     .then(processes => {
         assetsSelect.innerHTML = '<option value="">Select an asset</option>';
-        processes.forEach(proc => {
-            const option = document.createElement('option');
-            option.value = `assets/${proc.file}`;
-            option.textContent = proc.name;
-            assetsSelect.appendChild(option);
-        });
+        if (Array.isArray(processes) && processes.length > 0) {
+            processes.forEach(proc => {
+                if (proc.name && proc.file) {
+                    const option = document.createElement('option');
+                    option.value = `assets/${proc.file}`;
+                    option.textContent = proc.name;
+                    assetsSelect.appendChild(option);
+                }
+            });
+        } else {
+            console.warn('processes.json is empty or invalid:', processes);
+            errorMessage.textContent = 'No processes available. Check processes.json.';
+            errorMessage.classList.remove('hidden');
+        }
     })
     .catch(err => {
         console.error('Error loading processes:', err);
