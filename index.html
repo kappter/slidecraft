@@ -66,7 +66,7 @@
         </div>
     </header>
 
-    <main class="flex-grow pt-16 pb-16 px-4">
+    <main class="flex-grow pt-16 pb-20 px-4">
         <div class="max-w-4xl mx-auto">
             <section id="upload-screen" class="mt-4 p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md">
                 <h2 class="text-xl font-semibold mb-4 text-cushion">Welcome to SlideCraft</h2>
@@ -101,7 +101,7 @@
                 <h2 id="step-title" class="text-2xl font-bold mb-4 m-4"></h2>
                 <p id="step-number" class="text-base font-medium mb-4 m-4"></p>
                 <p id="step-description" class="mb-4 text-center max-w-md m-4"></p>
-                <img id="step-image" class="mb-4 max-w-full max-h-128 rounded-lg m-4" src="assets/placeholder.jpg" alt="Step Image">
+                <img id="step-image" class="mb-4 max-w-full max-h-256 rounded-lg m-4" src="assets/placeholder.jpg" alt="Step Image">
                 <div class="flex space-x-4 m-4">
                     <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 drop-shadow-lg m-2 hidden">Previous</button>
                     <button id="next-button" class="p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg m-2">Next</button>
@@ -113,7 +113,7 @@
                 <div id="quiz-content" class="m-4"></div>
                 <div class="mt-4 m-4">
                     <label for="photo-upload-quiz" class="block text-base font-medium mb-2 text-cushion">Upload Photo <span class="text-red-600">*</span></label>
-                    <div class="relative">
+                    <div class="relative pointer-events-none">
                         <input type="file" id="photo-upload-quiz" accept="image/jpeg,image/png" class="photo-upload absolute inset-0 w-full h-full opacity-0" required>
                         <span class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center cursor-pointer">Choose File</span>
                     </div>
@@ -148,10 +148,10 @@
         </div>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full p-4 bg-gray-800 text-white rounded-t-lg shadow-lg h-16 z-10">
+    <footer class="fixed bottom-0 left-0 w-full p-4 bg-gray-900 text-white rounded-t-lg shadow-lg h-20 z-10 border-t border-gray-600">
         <div class="flex items-center justify-center h-full">
-            <p id="time-info" class="text-white text-base mr-4"></p>
-            <p id="version-info" class="text-white text-base">Version: 002-001-001-031</p>
+            <p id="time-info" class="text-white text-lg mr-4"></p>
+            <p id="version-info" class="text-white text-lg">Version: 002-001-001-032</p>
         </div>
     </footer>
 </body>

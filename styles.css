@@ -131,14 +131,15 @@ header, footer {
 }
 
 footer {
-    background-color: #4a5568; /* Solid dark gray for legibility */
+    background-color: #1a202c; /* Darker solid background */
     color: #ffffff;
-    height: 64px; /* Ensure sufficient height */
+    height: 80px; /* Increased height */
+    border-top: 2px solid #4a5568; /* Visible border */
 }
 
 /* Image size limit for presentation with larger inkblots */
 #step-image {
-    max-height: 128px;
+    max-height: 256px; /* Doubled from 128px */
     max-width: 100%;
     object-fit: contain;
 }
@@ -231,6 +232,6 @@ select:focus {
     }
     main {
         padding-top: 16px;
-        padding-bottom: 16px;
+        padding-bottom: 20px;
     }
 }

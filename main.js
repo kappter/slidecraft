@@ -427,8 +427,8 @@ printReport.addEventListener('click', () => {
 // Generative inkblot function with larger size
 function generateInkblot() {
     const canvas = document.createElement('canvas');
-    canvas.width = 1200; // Doubled from 600
-    canvas.height = 900; // Doubled from 450
+    canvas.width = 2400; // Doubled from 1200 to 2400
+    canvas.height = 1800; // Doubled from 900 to 1800
     const ctx = canvas.getContext('2d');
     
     // Set background to transparent
@@ -442,22 +442,22 @@ function generateInkblot() {
     // Generate symmetrical inkblot
     for (let i = 0; i < 10; i++) {
         ctx.beginPath();
-        const startX = Math.random() * 600;
-        const startY = Math.random() * 900;
+        const startX = Math.random() * 1200; // Adjusted for new width
+        const startY = Math.random() * 1800; // Adjusted for new height
         ctx.moveTo(startX, startY);
         
         // Draw soft, curved lines
         for (let j = 0; j < 5; j++) {
-            const endX = startX + (Math.random() - 0.5) * 300;
-            const endY = startY + (Math.random() - 0.5) * 300;
+            const endX = startX + (Math.random() - 0.5) * 600; // Doubled range
+            const endY = startY + (Math.random() - 0.5) * 600; // Doubled range
             ctx.quadraticCurveTo(
-                startX + (Math.random() - 0.5) * 200,
-                startY + (Math.random() - 0.5) * 200,
+                startX + (Math.random() - 0.5) * 400, // Doubled control point range
+                startY + (Math.random() - 0.5) * 400, // Doubled control point range
                 endX,
                 endY
             );
         }
-        ctx.lineWidth = 20 + Math.random() * 20; // Doubled line width
+        ctx.lineWidth = 40 + Math.random() * 40; // Doubled line width
         ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.lineCap = 'round';
         ctx.stroke();
@@ -468,16 +468,16 @@ function generateInkblot() {
         ctx.beginPath();
         ctx.moveTo(-startX, startY);
         for (let j = 0; j < 5; j++) {
-            const endX = -startX + (Math.random() - 0.5) * 300;
-            const endY = startY + (Math.random() - 0.5) * 300;
+            const endX = -startX + (Math.random() - 0.5) * 600; // Doubled range
+            const endY = startY + (Math.random() - 0.5) * 600; // Doubled range
             ctx.quadraticCurveTo(
-                -startX + (Math.random() - 0.5) * 200,
-                startY + (Math.random() - 0.5) * 200,
+                -startX + (Math.random() - 0.5) * 400, // Doubled control point range
+                startY + (Math.random() - 0.5) * 400, // Doubled control point range
                 endX,
                 endY
             );
         }
-        ctx.lineWidth = 20 + Math.random() * 20; // Doubled line width
+        ctx.lineWidth = 40 + Math.random() * 40; // Doubled line width
         ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.stroke();
         ctx.restore();
