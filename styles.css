@@ -130,10 +130,14 @@ header, footer {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+header {
+    background-color: #1a2e1a; /* Darker green for contrast */
+}
+
 footer {
     background-color: #1a202c; /* Darker solid background */
     color: #ffffff;
-    height: 96px; /* Increased height */
+    height: 48px; /* Reduced height */
     border-top: 2px solid #4a5568; /* Visible border */
 }
 
@@ -232,6 +236,6 @@ select:focus {
     }
     main {
         padding-top: 8px;
-        padding-bottom: 24px;
+        padding-bottom: 12px;
     }
 }

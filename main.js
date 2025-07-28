@@ -336,6 +336,13 @@ chooseFileSpan.addEventListener('click', () => {
     photoUploadQuiz.click();
 });
 
+photoUploadQuiz.addEventListener('click', (e) => {
+    if (e.target !== chooseFileSpan) {
+        e.preventDefault();
+        return false;
+    }
+});
+
 photoUploadQuiz.addEventListener('change', (event) => {
     const file = event.target.files[0];
     handlePhotoUpload(file, photoPreviewQuiz);
