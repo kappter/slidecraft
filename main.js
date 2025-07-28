@@ -38,7 +38,7 @@ const printReport = document.getElementById('print-report');
 
 // Theme switching
 themeSelect.addEventListener('change', () => {
-    document.body.className = themeSelect.value + '-theme min-h-screen flex flex-col bg-gray-100';
+    document.body.className = themeSelect.value + '-theme min-h-screen flex flex-col';
 });
 
 // Populate assets dropdown from processes.json
