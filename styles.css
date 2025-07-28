@@ -1,39 +1,46 @@
-/* Custom styles for calm earthy design and theme options */
+/* Custom styles for ethereal design and theme options */
 body {
-    background: linear-gradient(to bottom, #f5f5dc, #8a9a5b);
-    transition: background 1s ease;
+    background: linear-gradient(45deg, #87ceeb, #9370db, #e6e6fa);
+    background-size: 200% 200%;
+    animation: etherealMorph 60s ease infinite;
+}
+
+@keyframes etherealMorph {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
 }
 
 body.light-theme.theme-earthy {
-    background: linear-gradient(to bottom, #f5f5dc, #8a9a5b); /* Beige to olive green */
+    background: linear-gradient(45deg, #87ceeb, #9370db, #e6e6fa); /* Keep ethereal */
 }
 
 body.dark-theme.theme-earthy {
-    background: linear-gradient(to bottom, #4a4e3d, #2f3a2e); /* Dark green to deeper green */
+    background: linear-gradient(45deg, #1a1a2e, #4a5568, #2d3748); /* Dark ethereal */
 }
 
 body.light-theme.theme-architecture {
-    background: linear-gradient(to bottom, #e0e0e0, #a9a9a9); /* Concrete gray tones */
+    background: linear-gradient(45deg, #e0e0e0, #a9a9a9, #d3d3d3); /* Ethereal concrete */
 }
 
 body.dark-theme.theme-architecture {
-    background: linear-gradient(to bottom, #333333, #666666); /* Dark steel gray */
+    background: linear-gradient(45deg, #333333, #666666, #4a4a4a); /* Dark steel ethereal */
 }
 
 body.light-theme.theme-medieval {
-    background: linear-gradient(to bottom, #d2b48c, #8b4513); /* Tan to brown */
+    background: linear-gradient(45deg, #d2b48c, #8b4513, #deb887); /* Ethereal tan to brown */
 }
 
 body.dark-theme.theme-medieval {
-    background: linear-gradient(to bottom, #5c4033, #2f1b0c); /* Dark wood tones */
+    background: linear-gradient(45deg, #5c4033, #2f1b0c, #3c2f2f); /* Dark wood ethereal */
 }
 
 body.light-theme.theme-space {
-    background: linear-gradient(to bottom, #1e1e2f, #4a90e2); /* Deep space to blue nebula */
+    background: linear-gradient(45deg, #1e1e2f, #4a90e2, #a3bffa); /* Ethereal space */
 }
 
 body.dark-theme.theme-space {
-    background: linear-gradient(to bottom, #0a0a1a, #1e40af); /* Black space to dark blue */
+    background: linear-gradient(45deg, #0a0a1a, #1e40af, #3b82f6); /* Dark ethereal space */
 }
 
 body.light-theme {
@@ -47,7 +54,7 @@ body.dark-theme {
 body.dark-theme #upload-screen,
 body.dark-theme #quiz-screen,
 body.dark-theme #report-preview {
-    background-color: rgba(45, 55, 72, 0.9);
+    background-color: rgba(45, 55, 72, 0.7);
 }
 
 body.dark-theme input,
@@ -76,22 +83,23 @@ body.dark-theme #error-message {
     color: #fc8181;
 }
 
-/* Ensure content panels are readable */
+/* Ensure content panels are ethereal */
 #upload-screen,
 #presentation-screen,
 #quiz-screen,
 #report-preview {
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
     border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 body.dark-theme #upload-screen,
 body.dark-theme #presentation-screen,
 body.dark-theme #quiz-screen,
 body.dark-theme #report-preview {
-    background-color: rgba(45, 55, 72, 0.9);
+    background-color: rgba(45, 55, 72, 0.7);
 }
 
 /* Ensure buttons are readable */
@@ -116,9 +124,10 @@ body.dark-theme #report-preview {
 
 /* Header and footer styling */
 header, footer {
-    background-color: #4a5568;
-    border-bottom: 1px solid #2d3748;
-    border-top: 1px solid #2d3748;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Image size limit for presentation */
@@ -153,11 +162,11 @@ select:focus {
 @media (max-width: 640px) {
     header, footer {
         padding: 0.5rem;
-        height: 10px;
+        height: 12px;
     }
     main {
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 12px;
+        padding-bottom: 12px;
     }
     #upload-screen, #quiz-screen, #report-preview {
         padding: 1rem;
@@ -170,10 +179,10 @@ select:focus {
 @media (min-width: 641px) {
     header, footer {
         padding: 1rem;
-        height: 12px;
+        height: 16px;
     }
     main {
-        padding-top: 12px;
-        padding-bottom: 12px;
+        padding-top: 16px;
+        padding-bottom: 16px;
     }
 }
