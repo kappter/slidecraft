@@ -93,6 +93,7 @@ assetsSelect.addEventListener('change', () => {
                 })).sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
                 taskName = selectedFile.replace('assets/', '').replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
                 startButton.disabled = false;
+                reportNameInput.value = taskName; // Pre-fill report name with process name
             },
             error: (err) => {
                 errorMessage.textContent = 'Error loading CSV file.';
@@ -102,12 +103,18 @@ assetsSelect.addEventListener('change', () => {
         });
     } else {
         startButton.disabled = !csvUpload.files.length;
+        reportNameInput.value = ''; // Clear report name if no asset selected
     }
 });
 
 // CSV upload event
 csvUpload.addEventListener('change', () => {
     startButton.disabled = !csvUpload.files.length && !assetsSelect.value;
+    if (csvUpload.files.length) {
+        const file = csvUpload.files[0];
+        taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
+        reportNameInput.value = taskName; // Pre-fill report name with uploaded file name
+    }
 });
 
 // Start button handler
@@ -280,6 +287,10 @@ function generateQuiz() {
 
 // Quiz submission
 submitQuiz.addEventListener('click', () => {
+    if (!photoUpload.files || !photoUpload.files[0]) {
+        alert('Please upload a photo before submitting the report.');
+        return;
+    }
     quizScore = 0;
     userQuizResponses = [];
     quizAnswers.forEach((answer, index) => {
@@ -304,6 +315,9 @@ photoUpload.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file || file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
         alert('Please upload a JPEG or PNG image under 5MB.');
+        photoUpload.value = ''; // Clear invalid file
+        photoPreview.classList.add('hidden');
+        userPhoto = null;
         return;
     }
     const reader = new FileReader();
@@ -322,7 +336,7 @@ photoUpload.addEventListener('change', (event) => {
 
 // Report preview generation
 function generateReportPreview() {
-    const reportName = reportNameInput.value || 'Untitled_Report';
+    const reportName = reportNameInput.value || taskName; // Use taskName if reportName is empty
     const userName = userNameInput.value || 'Anonymous';
     const endTime = new Date();
     const timeTaken = startTime ? Math.floor((endTime - startTime) / 1000) : 0;
@@ -376,8 +390,11 @@ function generateReportPreview() {
 
 // Print report
 printReport.addEventListener('click', () => {
-    const reportName = reportNameInput.value || 'Untitled_Report';
+    if (!userPhoto || !photoUpload.files || !photoUpload.files[0]) {
+        alert('Please upload a photo before printing the report.');
+        return;
+    }
+    const reportName = reportNameInput.value || taskName;
     window.print();
-    // Note: Browser print dialog uses the page title for the PDF name; this is a limitation.
-    // For a custom filename, users can manually rename the saved PDF.
+    // Note: Browser print dialog uses the page title for the PDF name; users can manually rename.
 });
