@@ -1,101 +1,68 @@
 # SlideCraft
 
-SlideCraft is a web-based application designed for high school students and educators to create interactive, presentation-style process guides from a CSV file. Users can upload a CSV containing process steps, select from predefined processes, view them in a full-screen, clickable interface (optimized for phones and projectors), choose between Light and Dark themes, and complete a random multiple-choice quiz. The app tracks the time taken and allows users to upload a photo of their process results, generating a report that can be viewed in the browser and printed or saved as a PDF.
+SlideCraft is a web-based application for creating interactive process guides with customizable themes, step-by-step presentations, quizzes, and report generation. It supports CSV uploads and asset selection for dynamic content creation.
+
+## Version
+- Current Version: 002-001-001-033 (Updated July 28, 2025)
 
 ## Features
-- **CSV Upload**: Upload a CSV file with process steps (columns: `Step`, `Description`, `Order Number`, `Image URL`, `Duration`).
-- **Predefined Processes**: Select from a list of built-in processes stored in `assets/` via a dropdown, including Peanut Butter Sandwich, Wind Down Routine, and Study Environment.
-- **Presentation Interface**: Full-screen, clickable slides displaying each step’s title, description, and image, with “Next” and “Previous” buttons, keyboard navigation (arrow keys), and optional auto-advance based on duration. Shows elapsed time vs. average time in the footer and step number out of total.
-- **Theme Selection**: Choose from Light or Dark themes for optimal visibility on mobile devices or projectors.
-- **Time Tracking**: Tracks time from CSV upload to quiz completion, included in the report.
-- **Multiple-Choice Quiz**: Generates a 5-question quiz with 4 answer choices per question, based on the process steps, with no auto-advance.
-- **Photo Upload**: Users must upload a photo (JPEG/PNG, max 5MB) to include in the report, showcasing the process results.
-- **Report Naming**: Users must specify a custom report name, which is displayed in the report and used as a suggestion for the saved PDF file.
-- **Report Preview**: Displays a scrollable report in the browser with user info, quiz results, process steps, and uploaded photo, allowing users to enter their name, name their report, and upload a photo before printing or saving as PDF using the browser’s native functionality.
-- **Responsive Design**: Works seamlessly on desktops, phones, and projectors using Tailwind CSS with a fixed, ultra-compact header and footer, featuring a super clean and professional look.
-- **Static Hosting**: Deployable on GitHub Pages with no server-side dependencies.
+- **Theme Customization**: Switch between light/dark modes and earthy, architecture, medieval, or space designs.
+- **CSV Upload**: Import steps from a CSV file with Step, Description, Order Number, Image URL, and Duration columns.
+- **Presentation Mode**: Navigate through steps with next/previous buttons or auto-advance based on CSV durations.
+- **Quiz Integration**: Generate a 5-question quiz based on presentation steps, requiring a photo upload.
+- **Report Generation**: Create a printable report with quiz results, time taken, and user-uploaded photos.
+- **Inkblot Generation**: Display unique inkblot images when no step image is provided, with a doubled frame size (2400x1800).
+- **Mobile-Friendly**: Responsive design for devices under 640px and above 641px.
 
-## Directory Structure
-```
-slidecraft/
-├── index.html                # Main HTML file
-├── main.js                   # Core JavaScript logic
-├── styles.css                # Custom theme styles
-├── tailwind.css             # Compiled Tailwind CSS
-├── assets/
-│   ├── sample.csv           # Sample CSV file
-│   ├── wind-down-routine.csv # Wind Down Routine process
-│   ├── study-environment.csv # Study Environment process
-│   ├── placeholder.jpg      # Fallback image for invalid URLs
-│   ├── favicon.ico          # Favicon
-│   ├── processes.json       # List of available process CSVs
-├── README.md                # This file
-└── .gitignore               # Git ignore file
-```
+## Recent Updates
+- Fixed header title visibility by aligning text to the top and adjusting padding.
+- Improved footer text alignment to the top with increased height (96px) and full visibility.
+- Isolated quiz screen file dialog to the "Choose File" span, preventing screen-wide triggers.
+- Maintained inkblot frame size at 2400x1800 for step slides.
 
-## Installation
-No installation is required, as SlideCraft runs entirely in the browser. To set up locally or deploy:
-
+## Setup Instructions
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/kappter/slidecraft.git
    cd slidecraft
    ```
+2. **Install Dependencies**:
+   - Ensure Tailwind CSS is included via `tailwind.css`.
+   - No additional npm packages are required; PapaParse is loaded via CDN.
+3. **Prepare Assets**:
+   - Place CSV files (e.g., `sample.csv`, `wind-down-routine.csv`, `study-environment.csv`) in the `assets/` directory.
+   - Include `processes.json` in `assets/` for asset selection.
+   - Add `placeholder.jpg`, `favicon.ico`, and any custom images referenced in CSV Image URL columns.
+4. **Run Locally**:
+   - Serve the files using a local server (e.g., `python -m http.server 8000` or any static server).
+   - Open `http://localhost:8000` in a browser.
+5. **Deploy to GitHub Pages**:
+   - Push changes to the `main` branch.
+   - Enable GitHub Pages in repository settings for the `main` branch and `/ (root)` directory.
+   - Access at https://kappter.github.io/slidecraft/.
 
-2. **Serve Locally** (optional):
-   Use a local server (e.g., Python’s HTTP server):
-   ```bash
-   python3 -m http.server 8000
-   ```
-   Open `http://localhost:8000` in your browser.
+## Usage Guidelines
+- **Upload CSV**: Select a file or asset with the required columns to start.
+- **Navigate Slides**: Use "Next" and "Previous" buttons or enable auto-advance.
+- **Take Quiz**: Answer questions and upload a photo (JPEG/PNG, max 5MB) to proceed.
+- **Generate Report**: Enter a report name, optional user name, and upload a photo to print.
+- **Theme Switch**: Use the dropdowns in the header to adjust visibility and style.
 
-3. **Deploy to GitHub Pages**:
-   - Push the repository to GitHub.
-   - Enable GitHub Pages in the repository settings, selecting the `main` branch and `/ (root)` directory.
-   - Access the app at `https://kappter.github.io/slidecraft`.
+## File Structure
+- `index.html`: Main HTML structure with Tailwind CSS and custom styles.
+- `styles.css`: Custom CSS for ethereal themes and responsive design.
+- `main.js`: JavaScript for CSV parsing, presentation logic, quiz generation, and report creation.
+- `assets/`: Contains `sample.csv`, `wind-down-routine.csv`, `study-environment.csv`, `processes.json`, `placeholder.jpg`, and `favicon.ico`.
+- `tailwind.css`: Compiled Tailwind CSS file.
 
-## Usage
-1. Open the app in a browser (desktop, phone, or projector).
-2. Select a theme (Light or Dark) from the fixed header dropdown for optimal visibility.
-3. Choose a predefined process from the "Select Asset" dropdown or upload a custom CSV file containing process steps (see [CSV Format](#csv-format) below).
-4. Check 'Auto-Advance' to move slides automatically based on the Duration column (default 5 seconds).
-5. Click 'Start' to begin the guided process.
-6. Complete the 5-question multiple-choice quiz.
-7. View the report preview, enter a report name, your name, and upload a photo (JPEG/PNG, max 5MB) of your process results.
-8. Click "Print Report" to print or save it as a PDF using your browser.
-9. Submit the printed or saved PDF to Canvas or your learning management system.
-
-## CSV Format
-The CSV file must have the following columns:
-- **Step**: Brief title of the step (e.g., “Mix Ingredients”).
-- **Description**: Detailed explanation of the step (e.g., “Combine flour, sugar, and eggs”).
-- **Order Number**: Numeric sequence of the step (e.g., 1, 2, 3).
-- **Image URL**: Publicly accessible URL to an image for the step (e.g., `https://example.com/image.jpg`).
-- **Duration**: Time in seconds for each step (e.g., 5, 10). Defaults to 5 if not specified.
-
-Example (`sample.csv`):
-```csv
-Step,Description,Order Number,Image URL,Duration
-Mix Ingredients,"Combine flour, sugar, and eggs in a bowl",1,https://example.com/mix.jpg,5
-Bake,"Place in oven at 350°F for 30 minutes",2,https://example.com/bake.jpg,10
-Cool,"Let cool for 10 minutes",3,https://example.com/cool.jpg,5
-```
-
-## Dependencies
-All dependencies are loaded via CDN or included locally:
-- **Tailwind CSS**: Compiled locally in `tailwind.css` for styling.
-- **Papa Parse**: For CSV parsing (via CDN).
+## Known Issues
+- Ensure CSV files have all required columns to avoid errors.
+- Photo uploads must be under 5MB and in JPEG/PNG format.
+- Test on multiple devices to confirm responsive behavior.
 
 ## Contributing
-Contributions are welcome! Please:
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/YourFeature`).
-3. Commit changes (`git commit -m 'Add YourFeature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a pull request.
+- Fork the repository and submit pull requests with detailed descriptions.
+- Report issues or suggest features via GitHub Issues.
 
 ## License
-This project is licensed under the MIT License.
-
-## Contact
-For questions or feedback, open an issue on GitHub.
+MIT License - See `LICENSE` file for details.
