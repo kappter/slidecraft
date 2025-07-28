@@ -49,7 +49,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="main.js" defer></script>
 </head>
-<body class="light-theme min-h-screen flex flex-col bg-gray-100">
+<body class="light-theme min-h-screen flex flex-col">
     <header class="fixed top-0 left-0 w-full p-2 z-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-b-lg shadow-lg h-12 md:h-16">
         <div class="flex items-center justify-center">
             <h1 class="text-lg font-bold">SlideCraft</h1>
@@ -61,7 +61,7 @@
     </header>
 
     <main class="flex-grow pt-12 md:pt-16 pb-12 md:pb-16 px-4">
-        <section id="upload-screen" class="max-w-2xl mx-auto mt-4 p-6 bg-white rounded-lg shadow-md">
+        <section id="upload-screen" class="max-w-2xl mx-auto mt-4 p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4">Welcome to SlideCraft</h2>
             <p class="text-base font-medium mb-4">SlideCraft is designed for students and educators to create interactive process guides. Follow these steps:</p>
             <ul class="list-disc pl-5 mb-4">
@@ -103,13 +103,13 @@
             </div>
         </section>
 
-        <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4">Quiz</h2>
             <div id="quiz-content"></div>
             <button id="submit-quiz" class="mt-4 p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 hidden">Submit Quiz</button>
         </section>
 
-        <section id="report-preview" class="hidden max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <section id="report-preview" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-90 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4">Report Preview</h2>
             <div id="report-content"></div>
             <div class="mt-4">
@@ -132,7 +132,7 @@
 
     <footer id="footer" class="fixed bottom-0 left-0 w-full p-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-lg shadow-lg h-12 md:h-16">
         <p id="time-info" class="text-sm"></p>
-        <p id="version-info" class="text-sm">Version: 002-001-001-019</p>
+        <p id="version-info" class="text-sm">Version: 002-001-001-020</p>
     </footer>
 </body>
 </html>
