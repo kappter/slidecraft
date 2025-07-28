@@ -182,8 +182,13 @@ function showStep(index) {
     stepTitle.textContent = steps[index].Step;
     stepNumber.textContent = `Step ${index + 1} of ${steps.length}`;
     stepDescription.textContent = steps[index].Description;
-    stepImage.src = steps[index]['Image URL'] || 'assets/placeholder.jpg';
-    stepImage.onerror = () => { stepImage.src = 'assets/placeholder.jpg'; };
+    let imageSrc = steps[index]['Image URL'] || '';
+    if (!imageSrc || imageSrc === 'assets/placeholder.jpg') {
+        imageSrc = generateInkblot();
+    } else {
+        stepImage.onerror = () => { stepImage.src = generateInkblot(); };
+    }
+    stepImage.src = imageSrc;
     prevButton.classList.toggle('hidden', index === 0);
     nextButton.textContent = index === steps.length - 1 ? 'Start Quiz' : 'Next';
     if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
@@ -404,3 +409,68 @@ printReport.addEventListener('click', () => {
     window.print();
     // Note: Browser print dialog uses the page title for the PDF name; users can manually rename.
 });
+
+// Generative inkblot function
+function generateInkblot() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 450;
+    const ctx = canvas.getContext('2d');
+    
+    // Set background to transparent
+    ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Earthy colors based on current theme
+    const colors = ['#8a9a5b', '#a3b18a', '#dad7cd', '#588157'];
+    ctx.globalAlpha = 0.3; // Soft opacity
+
+    // Generate symmetrical inkblot
+    for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        const startX = Math.random() * 300;
+        const startY = Math.random() * 450;
+        ctx.moveTo(startX, startY);
+        
+        // Draw soft, curved lines
+        for (let j = 0; j < 5; j++) {
+            const endX = startX + (Math.random() - 0.5) * 150;
+            const endY = startY + (Math.random() - 0.5) * 150;
+            ctx.quadraticCurveTo(
+                startX + (Math.random() - 0.5) * 100,
+                startY + (Math.random() - 0.5) * 100,
+                endX,
+                endY
+            );
+        }
+        ctx.lineWidth = 10 + Math.random() * 10;
+        ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Mirror symmetry
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.beginPath();
+        ctx.moveTo(-startX, startY);
+        for (let j = 0; j < 5; j++) {
+            const endX = -startX + (Math.random() - 0.5) * 150;
+            const endY = startY + (Math.random() - 0.5) * 150;
+            ctx.quadraticCurveTo(
+                -startX + (Math.random() - 0.5) * 100,
+                startY + (Math.random() - 0.5) * 100,
+                endX,
+                endY
+            );
+        }
+        ctx.lineWidth = 10 + Math.random() * 10;
+        ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // Disable image smoothing for crisp scaling
+    ctx.imageSmoothingEnabled = false;
+
+    return canvas.toDataURL();
+}
