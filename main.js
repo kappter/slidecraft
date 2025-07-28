@@ -44,7 +44,7 @@ themeSelect.addEventListener('change', () => {
 
 // Design toggle
 designSelect.addEventListener('change', () => {
-    document.body.className = `${themeSelect.value}-theme min-h-screen flex-col ${designSelect.value}`;
+    document.body.className = `${themeSelect.value}-theme min-h-screen flex flex-col ${designSelect.value}`;
 });
 
 // Populate assets dropdown from processes.json
@@ -411,11 +411,11 @@ printReport.addEventListener('click', () => {
     // Note: Browser print dialog uses the page title for the PDF name; users can manually rename.
 });
 
-// Generative inkblot function
+// Generative inkblot function with larger size
 function generateInkblot() {
     const canvas = document.createElement('canvas');
-    canvas.width = 600;
-    canvas.height = 450;
+    canvas.width = 1200; // Doubled from 600
+    canvas.height = 900; // Doubled from 450
     const ctx = canvas.getContext('2d');
     
     // Set background to transparent
@@ -429,22 +429,22 @@ function generateInkblot() {
     // Generate symmetrical inkblot
     for (let i = 0; i < 10; i++) {
         ctx.beginPath();
-        const startX = Math.random() * 300;
-        const startY = Math.random() * 450;
+        const startX = Math.random() * 600;
+        const startY = Math.random() * 900;
         ctx.moveTo(startX, startY);
         
         // Draw soft, curved lines
         for (let j = 0; j < 5; j++) {
-            const endX = startX + (Math.random() - 0.5) * 150;
-            const endY = startY + (Math.random() - 0.5) * 150;
+            const endX = startX + (Math.random() - 0.5) * 300;
+            const endY = startY + (Math.random() - 0.5) * 300;
             ctx.quadraticCurveTo(
-                startX + (Math.random() - 0.5) * 100,
-                startY + (Math.random() - 0.5) * 100,
+                startX + (Math.random() - 0.5) * 200,
+                startY + (Math.random() - 0.5) * 200,
                 endX,
                 endY
             );
         }
-        ctx.lineWidth = 10 + Math.random() * 10;
+        ctx.lineWidth = 20 + Math.random() * 20; // Doubled line width
         ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.lineCap = 'round';
         ctx.stroke();
@@ -455,16 +455,16 @@ function generateInkblot() {
         ctx.beginPath();
         ctx.moveTo(-startX, startY);
         for (let j = 0; j < 5; j++) {
-            const endX = -startX + (Math.random() - 0.5) * 150;
-            const endY = startY + (Math.random() - 0.5) * 150;
+            const endX = -startX + (Math.random() - 0.5) * 300;
+            const endY = startY + (Math.random() - 0.5) * 300;
             ctx.quadraticCurveTo(
-                -startX + (Math.random() - 0.5) * 100,
-                startY + (Math.random() - 0.5) * 100,
+                -startX + (Math.random() - 0.5) * 200,
+                startY + (Math.random() - 0.5) * 200,
                 endX,
                 endY
             );
         }
-        ctx.lineWidth = 10 + Math.random() * 10;
+        ctx.lineWidth = 20 + Math.random() * 20; // Doubled line width
         ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.stroke();
         ctx.restore();
