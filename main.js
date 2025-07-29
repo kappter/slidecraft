@@ -26,6 +26,7 @@ const prevButton = document.getElementById('prev-button');
 const nextButton = document.getElementById('next-button');
 const quizContent = document.getElementById('quiz-content');
 const submitQuiz = document.getElementById('submit-quiz');
+const restartQuiz = document.getElementById('restart-quiz');
 const reportNameInput = document.getElementById('report-name');
 const userNameInput = document.getElementById('user-name');
 const photoUpload = document.getElementById('photo-upload');
@@ -102,7 +103,7 @@ assetsSelect.addEventListener('change', () => {
                 })).sort((a, b) => Number(a['Order Number']) - Number(b['Order Number']));
                 taskName = selectedFile.replace('assets/', '').replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
                 startButton.disabled = false;
-                reportNameInput.value = taskName; // Pre-fill report name with process name
+                reportNameInput.value = taskName;
             },
             error: (err) => {
                 errorMessage.textContent = 'Error loading CSV file.';
@@ -112,7 +113,7 @@ assetsSelect.addEventListener('change', () => {
         });
     } else {
         startButton.disabled = !csvUpload.files.length;
-        reportNameInput.value = ''; // Clear report name if no asset selected
+        reportNameInput.value = '';
     }
 });
 
@@ -122,7 +123,7 @@ csvUpload.addEventListener('change', () => {
     if (csvUpload.files.length) {
         const file = csvUpload.files[0];
         taskName = file.name.replace('.csv', '').replace(/(^\w|-\w)/g, c => c.toUpperCase().replace('-', ' '));
-        reportNameInput.value = taskName; // Pre-fill report name with uploaded file name
+        reportNameInput.value = taskName;
     }
 });
 
@@ -214,7 +215,7 @@ nextButton.addEventListener('click', () => {
 // Auto-advance function
 function startAutoAdvance() {
     if (autoAdvanceInterval) clearInterval(autoAdvanceInterval);
-    const duration = steps[currentStep].Duration * 1000; // Use CSV Duration
+    const duration = steps[currentStep].Duration * 1000;
     autoAdvanceInterval = setInterval(() => {
         if (currentStep < steps.length - 1) {
             showStep(currentStep + 1);
@@ -238,7 +239,7 @@ function startTimeUpdate() {
         }
         const now = new Date();
         const elapsed = Math.floor((now - startTime) / 1000);
-        const average = 300; // 5 minutes in seconds
+        const average = 300;
         const elapsedHours = Math.floor(elapsed / 3600);
         const elapsedMinutes = Math.floor((elapsed % 3600) / 60);
         const elapsedSeconds = elapsed % 60;
@@ -264,21 +265,71 @@ function generateQuiz() {
     quizScore = 0;
     userQuizResponses = [];
     quizContent.innerHTML = '';
-    const questionCount = Math.min(5, steps.length);
+
+    // Calculate number of questions: 1 per 4 steps, minimum 4
+    const questionCount = Math.max(4, Math.ceil(steps.length / 4));
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
-    
+
+    // Define question type generators
+    const questionTypes = [
+        // Type 1: Match description snippet to step title
+        (step, index) => {
+            const descWords = step.Description.split(' ').slice(0, 10).join(' ');
+            const questionText = `Which step matches this description: "${descWords}..."?`;
+            const correctAnswer = step.Step;
+            const options = [correctAnswer];
+            while (options.length < 4) {
+                const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
+                if (!options.includes(randomStep)) options.push(randomStep);
+            }
+            options.sort(() => Math.random() - 0.5);
+            return { questionText, correctAnswer, options, index };
+        },
+        // Type 2: Select step title for a key action
+        (step, index) => {
+            const keyAction = step.Description.split('. ')[0].substring(0, 50);
+            const questionText = `Which step involves: "${keyAction}..."?`;
+            const correctAnswer = step.Step;
+            const options = [correctAnswer];
+            while (options.length < 4) {
+                const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
+                if (!options.includes(randomStep)) options.push(randomStep);
+            }
+            options.sort(() => Math.random() - 0.5);
+            return { questionText, correctAnswer, options, index };
+        },
+        // Type 3: Fill in the blank in description
+        (step, index) => {
+            const descParts = step.Description.split(' ');
+            if (descParts.length < 5) return null; // Skip if description is too short
+            const blankIndex = Math.floor(Math.random() * (descParts.length - 2)) + 1;
+            descParts[blankIndex] = '_____';
+            const questionText = `Fill in the blank for this step description: "${descParts.join(' ')}..."`;
+            const correctAnswer = step.Step;
+            const options = [correctAnswer];
+            while (options.length < 4) {
+                const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
+                if (!options.includes(randomStep)) options.push(randomStep);
+            }
+            options.sort(() => Math.random() - 0.5);
+            return { questionText, correctAnswer, options, index };
+        }
+    ];
+
     shuffledSteps.forEach((step, index) => {
+        // Randomly select a question type
+        const validQuestionTypes = questionTypes.filter(type => {
+            const result = type(step, index);
+            return result !== null;
+        });
+        if (validQuestionTypes.length === 0) return; // Skip if no valid questions
+        const questionType = validQuestionTypes[Math.floor(Math.random() * validQuestionTypes.length)];
+        const { questionText, correctAnswer, options, index: qIndex } = questionType(step, index);
+
         const questionDiv = document.createElement('div');
         questionDiv.className = 'mb-4';
-        questionDiv.innerHTML = `<p class="font-bold">Question ${index + 1}: What is Step ${step['Order Number']}?</p>`;
-        
-        const options = [step.Step];
-        while (options.length < 4) {
-            const randomStep = steps[Math.floor(Math.random() * steps.length)].Step;
-            if (!options.includes(randomStep)) options.push(randomStep);
-        }
-        options.sort(() => Math.random() - 0.5);
-        
+        questionDiv.innerHTML = `<p class="font-bold">Question ${index + 1}: ${questionText}</p>`;
+
         options.forEach((option, optIndex) => {
             const input = document.createElement('input');
             input.type = 'radio';
@@ -291,13 +342,16 @@ function generateQuiz() {
             questionDiv.appendChild(input);
             questionDiv.appendChild(label);
             questionDiv.appendChild(document.createElement('br'));
-            if (option === step.Step) quizAnswers.push({ question: index, correct: optIndex, correctAnswer: step.Step });
+            if (option === correctAnswer) {
+                quizAnswers.push({ question: index, correct: optIndex, correctAnswer, questionText });
+            }
         });
-        
+
         quizContent.appendChild(questionDiv);
     });
-    
+
     submitQuiz.classList.remove('hidden');
+    restartQuiz.classList.remove('hidden');
 }
 
 // Quiz submission
@@ -311,10 +365,10 @@ submitQuiz.addEventListener('click', () => {
     quizAnswers.forEach((answer, index) => {
         const selected = document.querySelector(`input[name="question-${index}"]:checked`);
         const userAnswer = selected ? selected.value : 'No answer';
-        const isCorrect = selected && selected.value === quizContent.querySelectorAll(`input[name="question-${index}"]`)[answer.correct].value;
+        const isCorrect = selected && selected.value === answer.correctAnswer;
         if (isCorrect) quizScore++;
         userQuizResponses.push({
-            question: `Question ${index + 1}: What is Step ${steps.find(s => s.Step === answer.correctAnswer)['Order Number']}?`,
+            question: answer.questionText,
             userAnswer,
             correctAnswer: answer.correctAnswer,
             isCorrect
@@ -323,6 +377,13 @@ submitQuiz.addEventListener('click', () => {
     quizScreen.classList.add('hidden');
     reportPreview.classList.remove('hidden');
     generateReportPreview();
+});
+
+// Restart quiz
+restartQuiz.addEventListener('click', () => {
+    quizScreen.classList.remove('hidden');
+    reportPreview.classList.add('hidden');
+    generateQuiz();
 });
 
 // Handle photo upload for quiz
@@ -353,7 +414,6 @@ function handlePhotoUpload(file, previewElement) {
         alert('Please upload a JPEG or PNG image under 5MB.');
         previewElement.classList.add('hidden');
         userPhoto = null;
-        // Only reset the relevant input
         if (previewElement === photoPreviewQuiz) {
             photoUploadQuiz.value = '';
         } else {
@@ -366,7 +426,6 @@ function handlePhotoUpload(file, previewElement) {
         userPhoto = reader.result;
         previewElement.src = userPhoto;
         previewElement.classList.remove('hidden');
-        // Update report preview if visible
         if (!reportPreview.classList.contains('hidden')) {
             generateReportPreview();
         }
@@ -396,7 +455,7 @@ function generateReportPreview() {
         </div>
         <div class="mb-6">
             <h3 class="text-lg font-bold mb-2">Quiz Results</h3>
-            <p><strong>Score:</strong> ${quizScore}/5</p>
+            <p><strong>Score:</strong> ${quizScore}/${quizAnswers.length}</p>
             ${userQuizResponses.map(response => `
                 <div class="mb-2">
                     <p><strong>${response.question}</strong></p>
