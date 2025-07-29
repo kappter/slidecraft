@@ -75,6 +75,17 @@
             </ol>
             <p class="mb-4 font-semibold text-center">Empower learning with simple, mobile-friendly tools.</p>
             <div class="mb-4">
+                <h3 class="text-lg font-bold mb-2">CSV Schema</h3>
+                <p class="text-sm text-gray-600 mb-2">Your CSV file must include the following columns:</p>
+                <ul class="list-disc pl-5 text-cushion bg-white bg-opacity-95 rounded-lg p-4 shadow">
+                    <li><strong>Step</strong>: Title of the step (e.g., "Prepare Materials")</li>
+                    <li><strong>Description</strong>: Detailed explanation of the step</li>
+                    <li><strong>Order Number</strong>: Numeric order of the step (e.g., 1, 2)</li>
+                    <li><strong>Image URL</strong>: URL to an image (optional, defaults to placeholder)</li>
+                    <li><strong>Duration</strong>: Time in seconds for the step (e.g., 5)</li>
+                </ul>
+            </div>
+            <div class="mb-4">
                 <label class="flex items-center">
                     <input type="checkbox" id="auto-advance" class="mr-2">
                     <span>Auto-Advance Slides</span>

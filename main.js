@@ -189,8 +189,13 @@ function showStep(index) {
     let imageSrc = steps[index]['Image URL'] || '';
     if (!imageSrc || imageSrc === 'assets/placeholder.jpg') {
         imageSrc = generateInkblot();
+        stepImage.classList.add('inkblot'); // Add class for animation
     } else {
-        stepImage.onerror = () => { stepImage.src = generateInkblot(); };
+        stepImage.classList.remove('inkblot'); // Remove animation for real images
+        stepImage.onerror = () => { 
+            stepImage.src = generateInkblot(); 
+            stepImage.classList.add('inkblot'); 
+        };
     }
     stepImage.src = imageSrc;
     prevButton.classList.toggle('hidden', index === 0);
@@ -266,13 +271,10 @@ function generateQuiz() {
     userQuizResponses = [];
     quizContent.innerHTML = '';
 
-    // Calculate number of questions: 1 per 4 steps, minimum 4
     const questionCount = Math.max(4, Math.ceil(steps.length / 4));
     const shuffledSteps = [...steps].sort(() => Math.random() - 0.5).slice(0, questionCount);
 
-    // Define question type generators
     const questionTypes = [
-        // Type 1: Match description snippet to step title
         (step, index) => {
             const descWords = step.Description.split(' ').slice(0, 10).join(' ');
             const questionText = `Which step matches this description: "${descWords}..."?`;
@@ -285,7 +287,6 @@ function generateQuiz() {
             options.sort(() => Math.random() - 0.5);
             return { questionText, correctAnswer, options, index };
         },
-        // Type 2: Select step title for a key action
         (step, index) => {
             const keyAction = step.Description.split('. ')[0].substring(0, 50);
             const questionText = `Which step involves: "${keyAction}..."?`;
@@ -298,10 +299,9 @@ function generateQuiz() {
             options.sort(() => Math.random() - 0.5);
             return { questionText, correctAnswer, options, index };
         },
-        // Type 3: Fill in the blank in description
         (step, index) => {
             const descParts = step.Description.split(' ');
-            if (descParts.length < 5) return null; // Skip if description is too short
+            if (descParts.length < 5) return null;
             const blankIndex = Math.floor(Math.random() * (descParts.length - 2)) + 1;
             descParts[blankIndex] = '_____';
             const questionText = `Fill in the blank for this step description: "${descParts.join(' ')}..."`;
@@ -317,12 +317,11 @@ function generateQuiz() {
     ];
 
     shuffledSteps.forEach((step, index) => {
-        // Randomly select a question type
         const validQuestionTypes = questionTypes.filter(type => {
             const result = type(step, index);
             return result !== null;
         });
-        if (validQuestionTypes.length === 0) return; // Skip if no valid questions
+        if (validQuestionTypes.length === 0) return;
         const questionType = validQuestionTypes[Math.floor(Math.random() * validQuestionTypes.length)];
         const { questionText, correctAnswer, options, index: qIndex } = questionType(step, index);
 
@@ -503,7 +502,7 @@ printReport.addEventListener('click', () => {
     window.print();
 });
 
-// Generative inkblot function with larger size
+// Generative inkblot function with theme colors and symmetry
 function generateInkblot() {
     const canvas = document.createElement('canvas');
     canvas.width = 2400;
@@ -513,21 +512,29 @@ function generateInkblot() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const colors = ['#8a9a5b', '#a3b18a', '#dad7cd', '#588157'];
+    // Map theme to colors from styles.css gradients
+    const themeColors = {
+        'theme-earthy': ['#8a9a5b', '#a3b18a', '#dad7cd', '#588157'],
+        'theme-architecture': ['#e0e0e0', '#a9a9a9', '#d3d3d3', '#b0c4de'],
+        'theme-medieval': ['#d2b48c', '#8b4513', '#deb887', '#cd853f'],
+        'theme-space': ['#1e1e2f', '#4a90e2', '#a3bffa', '#1e90ff']
+    };
+    const selectedTheme = designSelect.value || 'theme-earthy';
+    const colors = themeColors[selectedTheme] || themeColors['theme-earthy'];
     ctx.globalAlpha = 0.3;
 
     for (let i = 0; i < 10; i++) {
         ctx.beginPath();
-        const startX = Math.random() * 1200;
-        const startY = Math.random() * 1800;
+        const startX = Math.random() * canvas.width; // Full canvas width for symmetry
+        const startY = Math.random() * canvas.height;
         ctx.moveTo(startX, startY);
         
         for (let j = 0; j < 5; j++) {
-            const endX = startX + (Math.random() - 0.5) * 600;
-            const endY = startY + (Math.random() - 0.5) * 600;
+            const endX = startX + (Math.random() - 0.5) * canvas.width * 0.25;
+            const endY = startY + (Math.random() - 0.5) * canvas.height * 0.25;
             ctx.quadraticCurveTo(
-                startX + (Math.random() - 0.5) * 400,
-                startY + (Math.random() - 0.5) * 400,
+                startX + (Math.random() - 0.5) * canvas.width * 0.15,
+                startY + (Math.random() - 0.5) * canvas.height * 0.15,
                 endX,
                 endY
             );
@@ -542,11 +549,11 @@ function generateInkblot() {
         ctx.beginPath();
         ctx.moveTo(-startX, startY);
         for (let j = 0; j < 5; j++) {
-            const endX = -startX + (Math.random() - 0.5) * 600;
-            const endY = startY + (Math.random() - 0.5) * 600;
+            const endX = -startX + (Math.random() - 0.5) * canvas.width * 0.25;
+            const endY = startY + (Math.random() - 0.5) * canvas.height * 0.25;
             ctx.quadraticCurveTo(
-                -startX + (Math.random() - 0.5) * 400,
-                startY + (Math.random() - 0.5) * 400,
+                -startX + (Math.random() - 0.5) * canvas.width * 0.15,
+                startY + (Math.random() - 0.5) * canvas.height * 0.15,
                 endX,
                 endY
             );

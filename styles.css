@@ -119,7 +119,7 @@ footer {
     color: #e5e7eb;
     text-align: center;
     border-radius: 1rem 1rem 0 0;
-    min-height: 3rem; /* Consistent minimum height */
+    min-height: 3rem;
 }
 
 /* Button styling */
@@ -127,6 +127,7 @@ footer {
 #prev-button,
 #next-button,
 #submit-quiz,
+#restart-quiz,
 #print-report {
     background: linear-gradient(90deg, #3b82f6, #1d4ed8);
     color: #ffffff;
@@ -140,6 +141,7 @@ footer {
 #prev-button:hover,
 #next-button:hover,
 #submit-quiz:hover,
+#restart-quiz:hover,
 #print-report:hover {
     background: linear-gradient(90deg, #2563eb, #1e40af);
     transform: translateY(-2px);
@@ -149,6 +151,7 @@ body.dark-theme #start-button,
 body.dark-theme #prev-button,
 body.dark-theme #next-button,
 body.dark-theme #submit-quiz,
+body.dark-theme #restart-quiz,
 body.dark-theme #print-report {
     background: linear-gradient(90deg, #60a5fa, #3b82f6);
 }
@@ -157,6 +160,7 @@ body.dark-theme #start-button:hover,
 body.dark-theme #prev-button:hover,
 body.dark-theme #next-button:hover,
 body.dark-theme #submit-quiz:hover,
+body.dark-theme #restart-quiz:hover,
 body.dark-theme #print-report:hover {
     background: linear-gradient(90deg, #3b82f6, #1e40af);
 }
@@ -231,12 +235,24 @@ body.dark-theme .photo-upload:hover + span {
 
 /* Image styling for presentation */
 #step-image {
+    width: 90%; /* 90% of browser width */
     max-height: 320px;
-    max-width: 100%;
     object-fit: contain;
     border-radius: 1rem;
     margin: 1rem auto;
+    display: block;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Inkblot animation */
+#step-image.inkblot {
+    animation: inkblotPulse 60s ease-in-out infinite;
+}
+
+@keyframes inkblotPulse {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.02) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); }
 }
 
 /* Error message styling */
@@ -286,13 +302,14 @@ body.dark-theme #report-content {
     }
     main {
         padding-top: 0.5rem;
-        padding-bottom: 4rem; /* Increased to prevent footer overlap */
+        padding-bottom: 4rem;
     }
     #upload-screen, #quiz-screen, #report-preview {
         padding: 1.5rem;
         margin: 0.5rem;
     }
     #step-image {
+        width: 80%; /* Slightly smaller on mobile */
         max-height: 240px;
     }
     button {
@@ -303,7 +320,7 @@ body.dark-theme #report-content {
         font-size: 1.5rem;
     }
     footer {
-        min-height: 3.5rem; /* Ensure footer height is sufficient */
+        min-height: 3.5rem;
     }
 }
 
@@ -313,6 +330,6 @@ body.dark-theme #report-content {
     }
     main {
         padding-top: 1rem;
-        padding-bottom: 2rem; /* Moderate padding for larger screens */
+        padding-bottom: 2rem;
     }
 }
