@@ -1,5 +1,9 @@
 [
     {"name": "Peanut Butter Sandwich", "file": "sample.csv"},
     {"name": "Wind Down Routine", "file": "wind-down-routine.csv"},
-    {"name": "Study Environment", "file": "study-environment.csv"}
+    {"name": "Study Environment", "file": "study-environment.csv"},
+    {"name": "Prepare for the Day", "file": "prepare_for_day.csv"},
+    {"name": "Check In with Self", "file": "check_in_with_self.csv"},
+    {"name": "Concluding the Day", "file": "concluding_the_day.csv"},
+    {"name": "Prepare to Practice Guitar", "file": "prepare_to_practice_guitar.csv"}
 ]
