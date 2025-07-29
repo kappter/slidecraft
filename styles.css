@@ -114,12 +114,12 @@ header h1 {
 footer {
     background: rgba(17, 24, 39, 0.9);
     backdrop-filter: blur(10px);
-    padding: 1rem;
+    padding: 0.75rem;
     border-top: 2px solid rgba(255, 255, 255, 0.1);
     color: #e5e7eb;
     text-align: center;
     border-radius: 1rem 1rem 0 0;
-    height: auto;
+    min-height: 3rem; /* Consistent minimum height */
 }
 
 /* Button styling */
@@ -286,7 +286,7 @@ body.dark-theme #report-content {
     }
     main {
         padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
+        padding-bottom: 4rem; /* Increased to prevent footer overlap */
     }
     #upload-screen, #quiz-screen, #report-preview {
         padding: 1.5rem;
@@ -302,6 +302,9 @@ body.dark-theme #report-content {
     header h1 {
         font-size: 1.5rem;
     }
+    footer {
+        min-height: 3.5rem; /* Ensure footer height is sufficient */
+    }
 }
 
 @media (min-width: 641px) {
@@ -310,6 +313,6 @@ body.dark-theme #report-content {
     }
     main {
         padding-top: 1rem;
-        padding-bottom: 1rem;
+        padding-bottom: 2rem; /* Moderate padding for larger screens */
     }
 }
