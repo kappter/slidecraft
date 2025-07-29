@@ -302,7 +302,6 @@ function generateQuiz() {
 
 // Quiz submission
 submitQuiz.addEventListener('click', () => {
-    console.log('Photo upload element:', photoUploadQuiz); // Debug log
     if (!photoUploadQuiz.files || !photoUploadQuiz.files[0]) {
         alert('Please upload a photo before submitting the report.');
         return;
@@ -326,35 +325,40 @@ submitQuiz.addEventListener('click', () => {
     generateReportPreview();
 });
 
-// Photo upload (quiz and report)
-photoUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    handlePhotoUpload(file, photoPreview);
-});
-
-chooseFileSpan.addEventListener('click', () => {
-    photoUploadQuiz.click();
-});
-
-photoUploadQuiz.addEventListener('click', (e) => {
-    if (e.target !== chooseFileSpan) {
-        e.preventDefault();
-        return false;
-    }
-});
-
+// Handle photo upload for quiz
 photoUploadQuiz.addEventListener('change', (event) => {
     const file = event.target.files[0];
     handlePhotoUpload(file, photoPreviewQuiz);
 });
 
+// Handle photo upload for report
+photoUpload.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    handlePhotoUpload(file, photoPreview);
+});
+
+// Ensure chooseFileSpan triggers file input
+chooseFileSpan.addEventListener('click', () => {
+    photoUploadQuiz.click();
+});
+
 function handlePhotoUpload(file, previewElement) {
-    if (!file || file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
-        alert('Please upload a JPEG or PNG image under 5MB.');
-        photoUpload.value = '';
-        photoUploadQuiz.value = '';
+    if (!file) {
+        alert('No file selected. Please choose a file.');
         previewElement.classList.add('hidden');
         userPhoto = null;
+        return;
+    }
+    if (file.size > 5 * 1024 * 1024 || !['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Please upload a JPEG or PNG image under 5MB.');
+        previewElement.classList.add('hidden');
+        userPhoto = null;
+        // Only reset the relevant input
+        if (previewElement === photoPreviewQuiz) {
+            photoUploadQuiz.value = '';
+        } else {
+            photoUpload.value = '';
+        }
         return;
     }
     const reader = new FileReader();
@@ -362,9 +366,8 @@ function handlePhotoUpload(file, previewElement) {
         userPhoto = reader.result;
         previewElement.src = userPhoto;
         previewElement.classList.remove('hidden');
-        if (reportPreview.classList.contains('hidden') && previewElement === photoPreviewQuiz) {
-            generateReportPreview();
-        } else if (!reportPreview.classList.contains('hidden') && previewElement === photoPreview) {
+        // Update report preview if visible
+        if (!reportPreview.classList.contains('hidden')) {
             generateReportPreview();
         }
     };
@@ -373,7 +376,7 @@ function handlePhotoUpload(file, previewElement) {
 
 // Report preview generation
 function generateReportPreview() {
-    const reportName = reportNameInput.value || taskName; // Use taskName if reportName is empty
+    const reportName = reportNameInput.value || taskName;
     const userName = userNameInput.value || 'Anonymous';
     const endTime = new Date();
     const timeTaken = startTime ? Math.floor((endTime - startTime) / 1000) : 0;
@@ -420,6 +423,12 @@ function generateReportPreview() {
                 <img src="${userPhoto}" alt="User Uploaded Photo" class="max-w-full h-auto" style="max-width: 200px;">
             </div>
         `;
+    } else {
+        html += `
+            <div class="mb-6">
+                <p class="text-red-600">No photo uploaded.</p>
+            </div>
+        `;
     }
 
     reportContent.innerHTML = html;
@@ -433,70 +442,62 @@ printReport.addEventListener('click', () => {
     }
     const reportName = reportNameInput.value || taskName;
     window.print();
-    // Note: Browser print dialog uses the page title for the PDF name; users can manually rename.
 });
 
 // Generative inkblot function with larger size
 function generateInkblot() {
     const canvas = document.createElement('canvas');
-    canvas.width = 2400; // Doubled from 1200 to 2400
-    canvas.height = 1800; // Doubled from 900 to 1800
+    canvas.width = 2400;
+    canvas.height = 1800;
     const ctx = canvas.getContext('2d');
     
-    // Set background to transparent
     ctx.fillStyle = 'rgba(0, 0, 0, 0)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Earthy colors based on current theme
     const colors = ['#8a9a5b', '#a3b18a', '#dad7cd', '#588157'];
-    ctx.globalAlpha = 0.3; // Soft opacity
+    ctx.globalAlpha = 0.3;
 
-    // Generate symmetrical inkblot
     for (let i = 0; i < 10; i++) {
         ctx.beginPath();
-        const startX = Math.random() * 1200; // Adjusted for new width
-        const startY = Math.random() * 1800; // Adjusted for new height
+        const startX = Math.random() * 1200;
+        const startY = Math.random() * 1800;
         ctx.moveTo(startX, startY);
         
-        // Draw soft, curved lines
         for (let j = 0; j < 5; j++) {
-            const endX = startX + (Math.random() - 0.5) * 600; // Doubled range
-            const endY = startY + (Math.random() - 0.5) * 600; // Doubled range
+            const endX = startX + (Math.random() - 0.5) * 600;
+            const endY = startY + (Math.random() - 0.5) * 600;
             ctx.quadraticCurveTo(
-                startX + (Math.random() - 0.5) * 400, // Doubled control point range
-                startY + (Math.random() - 0.5) * 400, // Doubled control point range
+                startX + (Math.random() - 0.5) * 400,
+                startY + (Math.random() - 0.5) * 400,
                 endX,
                 endY
             );
         }
-        ctx.lineWidth = 40 + Math.random() * 40; // Doubled line width
+        ctx.lineWidth = 40 + Math.random() * 40;
         ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.lineCap = 'round';
         ctx.stroke();
 
-        // Mirror symmetry
         ctx.save();
         ctx.scale(-1, 1);
         ctx.beginPath();
         ctx.moveTo(-startX, startY);
         for (let j = 0; j < 5; j++) {
-            const endX = -startX + (Math.random() - 0.5) * 600; // Doubled range
-            const endY = startY + (Math.random() - 0.5) * 600; // Doubled range
+            const endX = -startX + (Math.random() - 0.5) * 600;
+            const endY = startY + (Math.random() - 0.5) * 600;
             ctx.quadraticCurveTo(
-                -startX + (Math.random() - 0.5) * 400, // Doubled control point range
-                startY + (Math.random() - 0.5) * 400, // Doubled control point range
+                -startX + (Math.random() - 0.5) * 400,
+                startY + (Math.random() - 0.5) * 400,
                 endX,
                 endY
             );
         }
-        ctx.lineWidth = 40 + Math.random() * 40; // Doubled line width
+        ctx.lineWidth = 40 + Math.random() * 40;
         ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
         ctx.stroke();
         ctx.restore();
     }
 
-    // Disable image smoothing for crisp scaling
     ctx.imageSmoothingEnabled = false;
-
     return canvas.toDataURL();
 }

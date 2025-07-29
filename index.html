@@ -45,115 +45,106 @@
     <title>SlideCraft</title>
     <link rel="stylesheet" href="tailwind.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="assets/favicon.ico">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <script src="main.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body class="light-theme min-h-screen flex flex-col theme-earthy">
-    <header class="fixed top-0 left-0 w-full p-2 bg-green-900 text-white rounded-b-lg shadow-lg z-20">
-        <div class="flex items-start justify-center">
-            <h1 class="text-xl font-bold">SlideCraft</h1>
-            <select id="theme-select" class="ml-2 p-1 border-none rounded-lg bg-white bg-opacity-70 text-lg text-black">
+    <header class="fixed top-0 left-0 w-full z-10 bg-opacity-75 flex justify-between items-center px-4">
+        <h1 class="text-xl font-bold">SlideCraft</h1>
+        <div class="space-x-4">
+            <select id="theme-select" class="p-1 rounded-lg">
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
-            <select id="design-select" class="ml-2 p-1 border-none rounded-lg bg-white bg-opacity-70 text-lg text-black">
-                <option value="earthy">Earthy</option>
-                <option value="architecture">Architecture</option>
-                <option value="medieval">Medieval</option>
-                <option value="space">Space</option>
+            <select id="design-select" class="p-1 rounded-lg">
+                <option value="theme-earthy">Earthy</option>
+                <option value="theme-architecture">Architecture</option>
+                <option value="theme-medieval">Medieval</option>
+                <option value="theme-space">Space</option>
             </select>
         </div>
     </header>
 
-    <main class="flex-grow pt-8 pb-12 px-4">
-        <div class="max-w-4xl mx-auto">
-            <section id="upload-screen" class="mt-4 p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md">
-                <h2 class="text-xl font-semibold mb-4 text-cushion">Welcome to SlideCraft</h2>
-                <p class="text-base font-medium mb-4 text-cushion">Create interactive process guides with ease. Follow these steps:</p>
-                <ul class="list-disc pl-5 mb-4 text-cushion">
-                    <li class="text-base font-medium mb-2">Choose a theme for visibility.</li>
-                    <li class="text-base font-medium mb-2">Upload a CSV with steps.</li>
-                    <li class="text-base font-medium mb-2">Start the guide and complete the quiz.</li>
-                </ul>
-                <p class="text-base font-medium mb-4 text-cushion">Empower learning with simple, mobile-friendly tools.</p>
-                <div class="mb-4">
-                    <label class="flex items-center text-base font-medium mb-2 text-cushion">
-                        <input type="checkbox" id="auto-advance" class="mr-2">
-                        Auto-Advance Slides
-                    </label>
-                </div>
-                <div class="mb-4">
-                    <label for="csv-upload" class="block text-base font-medium mb-2 text-cushion">Upload CSV</label>
-                    <input type="file" id="csv-upload" accept=".csv" class="p-2 border-none rounded-lg w-full bg-gray-100">
-                </div>
-                <div class="mb-4">
-                    <label for="assets-select" class="block text-base font-medium mb-2 text-cushion">Select Asset</label>
-                    <select id="assets-select" class="p-2 border-none rounded-lg w-full bg-gray-100">
-                        <option value="">Select an asset</option>
-                    </select>
-                </div>
-                <button id="start-button" class="p-2 bg-blue-600 text-white rounded-lg w-full shadow-md hover:bg-blue-700 drop-shadow-lg" disabled>Start</button>
-                <p id="error-message" class="hidden mt-2 text-red-600">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
-            </section>
+    <main class="flex flex-col items-center justify-center flex-grow pt-8 pb-8">
+        <div id="upload-screen" class="max-w-md mx-auto p-1 pt-8 pb-8">
+            <h2 class="text-2xl font-bold mb-3 text-center">Welcome to SlideCraft</h2>
+            <p class="mb-3 text-cushion">Create interactive process guides with ease. Follow these steps:</p>
+            <ol class="list-disc pl-5 mb-4 text-cushion">
+                <li>Choose a theme for visibility.</li>
+                <li>Upload a CSV with steps.</li>
+                <li>Start the guide and complete the quiz.</li>
+            </ol>
+            <p class="mb-4 font-semibold text-center">Empower learning with simple, mobile-friendly tools.</p>
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" id="auto-advance" class="mr-2">
+                    <span>Auto-Advance Slides</span>
+                </label>
+            </div>
+            <div class="mb-4">
+                <label for="csv-upload" class="block font-medium mb-2">Upload CSV</label>
+                <input type="file" id="csv-upload" accept=".csv" class="w-full p-1 mb-2 border-none rounded-lg">
+            </div>
+            <div class="mb-4">
+                <label for="assets-select" class="block font-medium mb-2">Select Asset</label>
+                <select id="assets-select" class="w-full p-1 mb-2 border-none rounded-lg">
+                    <option value="">Select an asset</option>
+                </select>
+            </div>
+            <button id="start-button" class="bg-blue-500 text-white p-1 rounded-lg w-full" disabled>Start</button>
+            <p id="error-message" class="text-red-500 text-center mt-2 hidden">Invalid CSV file. Please ensure it contains Step, Description, Order Number, Image URL, and Duration columns.</p>
+        </div>
 
-            <section id="presentation-screen" class="hidden h-full flex flex-col items-center justify-center">
-                <h2 id="step-title" class="text-2xl font-bold mb-4 m-4"></h2>
-                <p id="step-number" class="text-base font-medium mb-4 m-4"></p>
-                <p id="step-description" class="mb-4 text-center max-w-md m-4"></p>
-                <img id="step-image" class="mb-4 max-w-full max-h-256 rounded-lg m-4" src="assets/placeholder.jpg" alt="Step Image">
-                <div class="flex space-x-4 m-4">
-                    <button id="prev-button" class="p-2 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 drop-shadow-lg m-2 hidden">Previous</button>
-                    <button id="next-button" class="p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg m-2">Next</button>
-                </div>
-            </section>
+        <div id="presentation-screen" class="hidden max-w-2xl mx-auto p-1 pt-8 pb-8">
+            <h2 id="step-title" class="text-2xl font-bold mb-3 text-center"></h2>
+            <p id="step-number" class="mb-2 text-center"></p>
+            <p id="step-description" class="mb-4 text-cushion"></p>
+            <img id="step-image" class="max-w-full h-auto">
+            <div class="flex justify-between mt-4">
+                <button id="prev-button" class="bg-blue-500 text-white p-1 rounded-lg hidden">Previous</button>
+                <button id="next-button" class="bg-blue-500 text-white p-1 rounded-lg">Next</button>
+            </div>
+            <p id="time-info" class="text-center mt-4"></p>
+        </div>
 
-            <section id="quiz-screen" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md mt-24">
-                <h2 class="text-xl font-semibold mb-4 m-4">Quiz</h2>
-                <div id="quiz-content" class="m-4"></div>
-                <div class="mt-4 m-4">
-                    <label for="photo-upload-quiz" class="block text-base font-medium mb-2 text-cushion">Upload Photo <span class="text-red-600">*</span></label>
-                    <div class="relative">
-                        <input type="file" id="photo-upload-quiz" accept="image/jpeg,image/png" class="photo-upload absolute inset-0 w-full h-full opacity-0" required>
-                        <span id="choose-file-span" class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center cursor-pointer">Choose File</span>
-                    </div>
-                    <img id="photo-preview-quiz" class="hidden mt-2 max-w-xs rounded-lg" src="" alt="User Uploaded Photo">
-                    <p class="text-sm text-gray-600 mt-1">Required (JPEG/PNG, max 5MB)</p>
-                </div>
-                <button id="submit-quiz" class="mt-4 p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 drop-shadow-lg m-2 hidden">Submit Quiz</button>
-            </section>
+        <div id="quiz-screen" class="hidden max-w-2xl mx-auto p-1 pt-8 pb-8">
+            <h2 class="text-2xl font-bold mb-3 text-center">Quiz</h2>
+            <div id="quiz-content" class="mb-4"></div>
+            <div class="mb-4">
+                <label for="photo-upload-quiz" class="block font-medium mb-2">Upload Photo *</label>
+                <input type="file" id="photo-upload-quiz" accept="image/jpeg,image/png" class="photo-upload">
+                <span id="choose-file-span" class="choose-file">Choose File</span>
+                <p class="text-sm text-gray-600 mt-2">Required (JPEG/PNG, max 5MB)</p>
+                <img id="photo-preview-quiz" class="hidden max-w-full h-auto mt-2">
+            </div>
+            <button id="submit-quiz" class="bg-blue-500 text-white p-1 rounded-lg hidden">Submit Quiz</button>
+        </div>
 
-            <section id="report-preview" class="hidden max-w-2xl mx-auto p-6 bg-white bg-opacity-70 rounded-lg shadow-lg backdrop-blur-md">
-                <h2 class="text-xl font-semibold mb-4">Report Preview</h2>
-                <div id="report-content"></div>
-                <div class="mt-4">
-                    <label for="report-name" class="block text-base font-medium mb-2 text-cushion">Report Name <span class="text-red-600">*</span></label>
-                    <input type="text" id="report-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-gray-100" placeholder="Enter report name" required>
-                </div>
-                <div class="mt-4">
-                    <label for="user-name" class="block text-base font-medium mb-2 text-cushion">Your Name</label>
-                    <input type="text" id="user-name" class="p-2 border-none rounded-lg w-full max-w-xs bg-gray-100">
-                </div>
-                <div class="mt-4">
-                    <label for="photo-upload" class="block text-base font-medium mb-2 text-cushion cursor-pointer">Upload Photo <span class="text-red-600">*</span></label>
-                    <div class="relative">
-                        <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="photo-upload absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
-                        <span class="block p-2 bg-gray-100 border border-gray-300 rounded-lg text-center">Choose File</span>
-                    </div>
-                    <img id="photo-preview" class="hidden mt-2 max-w-xs rounded-lg" src="" alt="User Uploaded Photo">
-                    <p class="text-sm text-gray-600 mt-1">Required (JPEG/PNG, max 5MB)</p>
-                </div>
-                <button id="print-report" class="mt-4 p-2 bg-blue-600 text-white rounded-lg w-full shadow-md hover:bg-blue-700 drop-shadow-lg">Print Report</button>
-            </section>
+        <div id="report-preview" class="hidden max-w-2xl mx-auto p-1 pt-8 pb-8">
+            <h2 class="text-2xl font-bold mb-3 text-center">Report Preview</h2>
+            <div id="report-content" class="mb-4"></div>
+            <div class="mb-4">
+                <label for="report-name" class="block font-medium mb-2">Report Name *</label>
+                <input type="text" id="report-name" class="w-full p-1 mb-2 border-none rounded-lg">
+            </div>
+            <div class="mb-4">
+                <label for="user-name" class="block font-medium mb-2">Your Name</label>
+                <input type="text" id="user-name" class="w-full p-1 mb-2 border-none rounded-lg">
+            </div>
+            <div class="mb-4">
+                <label for="photo-upload" class="block font-medium mb-2">Upload Photo *</label>
+                <input type="file" id="photo-upload" accept="image/jpeg,image/png" class="photo-upload">
+                <span class="choose-file">Choose File</span>
+                <p class="text-sm text-gray-600 mt-2">Required (JPEG/PNG, max 5MB)</p>
+                <img id="photo-preview" class="hidden max-w-full h-auto mt-2">
+            </div>
+            <button id="print-report" class="bg-blue-500 text-white p-1 rounded-lg">Print Report</button>
         </div>
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full p-2 bg-gray-900 text-white rounded-t-lg shadow-lg h-12 z-10 border-t border-gray-600">
-        <div class="flex flex-row items-center justify-center h-full">
-            <p id="time-info" class="text-white text-lg mr-2"></p>
-            <span class="text-white text-lg"> | </span>
-            <p id="version-info" class="text-white text-lg ml-2">Version: 002-001-001-034</p>
-        </div>
+    <footer class="fixed bottom-0 left-0 w-full bg-opacity-75 text-center text-white p-1">
+        <p id="version-info">Version: 002-001-001-034</p>
     </footer>
+
+    <script src="main.js"></script>
 </body>
 </html>
